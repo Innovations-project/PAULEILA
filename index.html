@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAULEILA — A Genius Little Girl's World</title>
+<meta name="description" content="PAULEILA is a purple little universe of funny jokes, quick brain games, a word of the day, grade guides, and books for every kind of reader.">
+<meta name="theme-color" content="#07040d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23170a2b'/%3E%3Cpath d='M32 9l4.4 13.6L50 27l-13.6 4.4L32 45l-4.4-13.6L14 27l13.6-4.4L32 9z' fill='%23c084fc'/%3E%3Ccircle cx='46' cy='47' r='4' fill='%23fde68a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#panel-jokes">Skip to the worlds</a>
+
+<div class="bg" aria-hidden="true">
+  <span class="orb orb-a"></span>
+  <span class="orb orb-b"></span>
+  <span class="orb orb-c"></span>
+  <div class="grain"></div>
+</div>
+
+<header class="site-head">
+  <a class="brand" href="#top">
+    <span class="brand-mark" aria-hidden="true">✦</span>
+    <span class="brand-text">PAULEILA<small>a genius little girl's world</small></span>
+  </a>
+  <span class="head-pill">✨ Genius at work</span>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Welcome to her universe</p>
+      <h1 class="hero-title">PAULEILA</h1>
+      <p class="hero-lede">A purple little planet built for one very clever girl — where giggles are a subject, games make you sharper, and every word is worth collecting.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" type="button" data-jump="jokes">Start giggling 😂</button>
+        <button class="btn btn-ghost" type="button" data-jump="games">Play a quick game 🎮</button>
+      </div>
+      <dl class="hero-stats">
+        <div><dt>Jokes</dt><dd>17</dd></div>
+        <div><dt>Mini games</dt><dd>3</dd></div>
+        <div><dt>Grades</dt><dd>6</dd></div>
+        <div><dt>Books</dt><dd>14</dd></div>
+      </dl>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+      <div class="portal">
+        <div class="portal-stars"></div>
+        <div class="portal-ring"></div>
+        <div class="portal-core">
+          <span class="portal-mark">✦</span>
+          <span class="portal-title">GIRL<br>GENIUS</span>
+          <span class="portal-sub">est. in curiosity</span>
+        </div>
+      </div>
+      <span class="float-chip c1">😂 funny jokes</span>
+      <span class="float-chip c2">🎮 quick games</span>
+      <span class="float-chip c3">📖 14 books</span>
+      <span class="float-chip c4">✨ word of the day</span>
+    </div>
+  </section>
+
+  <div class="tabbar-wrap">
+    <nav class="tabs" role="tablist" aria-label="Worlds to explore">
+      <button class="tab" id="tab-jokes" type="button" role="tab" aria-selected="true" aria-controls="panel-jokes" data-panel="jokes">
+        <span aria-hidden="true">😂</span> Jokes
+      </button>
+      <button class="tab" id="tab-games" type="button" role="tab" aria-selected="false" aria-controls="panel-games" data-panel="games" tabindex="-1">
+        <span aria-hidden="true">🎮</span> Girl Games
+      </button>
+      <button class="tab" id="tab-words" type="button" role="tab" aria-selected="false" aria-controls="panel-words" data-panel="words" tabindex="-1">
+        <span aria-hidden="true">✨</span> Word of the Day
+      </button>
+      <button class="tab" id="tab-grades" type="button" role="tab" aria-selected="false" aria-controls="panel-grades" data-panel="grades" tabindex="-1">
+        <span aria-hidden="true">🎓</span> Graders
+      </button>
+      <button class="tab" id="tab-books" type="button" role="tab" aria-selected="false" aria-controls="panel-books" data-panel="books" tabindex="-1">
+        <span aria-hidden="true">📚</span> Books
+      </button>
+    </nav>
+  </div>
+
+  <!-- JOKES -->
+  <section class="panel" id="panel-jokes" role="tabpanel" aria-labelledby="tab-jokes" tabindex="0">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">The giggle lab</p>
+        <h2>Funny Jokes</h2>
+        <p class="lede">A daily dose of silly. Tap a card, collect the punchline, then go tell it to someone who needs a laugh.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-primary" id="joke-shuffle" type="button">Surprise me 🎲</button>
+      </div>
+    </div>
+
+    <div id="joke-feature"></div>
+
+    <div class="joke-grid" id="joke-grid"></div>
+  </section>
+
+  <!-- GAMES -->
+  <section class="panel" id="panel-games" role="tabpanel" aria-labelledby="tab-games" tabindex="0" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Quick girl games</p>
+        <h2>Three Tiny Brain Games</h2>
+        <p class="lede">No downloads, no waiting. Just three fast games for a sharp mind — match, sprint, and unscramble.</p>
+      </div>
+    </div>
+
+    <div class="games-grid">
+      <article class="game-card memory-card">
+        <div class="game-top">
+          <div>
+            <h3>Moonlight Memory</h3>
+            <p>Find all six pairs. Fewer moves = more genius.</p>
+          </div>
+          <span class="score-chip" id="memory-moves">0 moves</span>
+        </div>
+        <div class="memory-board" id="memory-board"></div>
+        <div class="game-actions">
+          <button class="btn btn-primary" id="memory-restart" type="button">Shuffle &amp; restart</button>
+          <span class="meta" id="memory-best"></span>
+        </div>
+        <p class="game-status" id="memory-status" aria-live="polite">Tap two cards to find a matching pair.</p>
+      </article>
+
+      <div class="games-stack">
+        <article class="game-card">
+          <div class="game-top">
+            <div>
+              <h3>Math Sprint</h3>
+              <p>Thirty seconds. How many can you catch?</p>
+            </div>
+            <span class="score-chip" id="math-score">0 pts</span>
+          </div>
+          <div class="timer-track" aria-hidden="true"><span id="math-timerbar"></span></div>
+          <p class="equation" id="math-question">Ready when you are.</p>
+          <div class="math-options" id="math-options"></div>
+          <div class="game-actions">
+            <button class="btn btn-primary" id="math-start" type="button">Start sprint</button>
+            <span class="meta" id="math-best"></span>
+          </div>
+          <p class="game-status" id="math-status" aria-live="polite">Tap the right answer before the timer runs out.</p>
+        </article>
+
+        <article class="game-card">
+          <div class="game-top">
+            <div>
+              <h3>Word Scramble</h3>
+              <p>Untangle the letters. Hints are allowed.</p>
+            </div>
+            <span class="score-chip" id="scramble-solved">0 solved</span>
+          </div>
+          <div class="scramble-tiles" id="scramble-tiles" aria-hidden="true"></div>
+          <div class="scramble-row">
+            <label class="sr-only" for="scramble-input">Your answer</label>
+            <input id="scramble-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Type the word…">
+            <button class="btn btn-primary" id="scramble-check" type="button">Check</button>
+          </div>
+          <p class="scramble-hint" id="scramble-hint"></p>
+          <div class="game-actions">
+            <button class="btn btn-ghost" id="scramble-hintbtn" type="button">Give me a hint</button>
+            <button class="btn btn-ghost" id="scramble-next" type="button">New word →</button>
+          </div>
+          <p class="game-status" id="scramble-status" aria-live="polite">Press Enter or tap Check when you have it.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORD OF THE DAY -->
+  <section class="panel" id="panel-words" role="tabpanel" aria-labelledby="tab-words" tabindex="0" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">One word, bigger world</p>
+        <h2>Word of the Day</h2>
+        <p class="lede">A shiny new word to carry around all day. Use it at dinner and watch eyebrows rise.</p>
+      </div>
+    </div>
+
+    <div class="word-layout">
+      <article class="word-card">
+        <div class="word-top">
+          <span class="tag">✨ Word of the day</span>
+          <time id="word-date"></time>
+        </div>
+        <h3 class="word-word" id="word-word">Curious</h3>
+        <p class="word-phonetic" id="word-phonetic">/ˈkyo͝orēəs/ · adjective</p>
+        <p class="word-def" id="word-def"></p>
+        <blockquote class="word-example" id="word-example"></blockquote>
+        <p class="word-note"><span aria-hidden="true">🧠</span> <span id="word-note"></span></p>
+        <div class="word-foot">
+          <span class="meta" id="word-progress"></span>
+          <button class="btn btn-primary" id="word-next" type="button">Another word →</button>
+        </div>
+      </article>
+
+      <aside class="word-side">
+        <h3>Keep a word jar</h3>
+        <p>Every word you learn is a tiny tool. Try one of these today:</p>
+        <ul class="check-list">
+          <li>Write the word somewhere you will see it.</li>
+          <li>Use it once out loud, even if it feels fancy.</li>
+          <li>Teach it to someone younger than you.</li>
+          <li>Draw the word instead of writing it.</li>
+        </ul>
+        <p class="tiny">Bonus: words you use three times tend to stay.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- GRADERS -->
+  <section class="panel" id="panel-grades" role="tabpanel" aria-labelledby="tab-grades" tabindex="0" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Graders, decoded</p>
+        <h2>What Each Grade Is Really About</h2>
+        <p class="lede">A grade is one school year. Pick a number to see the big skills, the big ideas, and one genius tip for that year.</p>
+      </div>
+    </div>
+
+    <div class="grade-layout">
+      <div>
+        <p class="picker-label">Choose a grade</p>
+        <div class="grade-picker" id="grade-picker" role="group" aria-label="Choose a grade"></div>
+        <p class="grade-note">In the US, “grade” means a year of school: Grade 1 is usually ages 6–7. In the UK, that same year is called Year 2.</p>
+      </div>
+      <article class="grade-detail" id="grade-detail" aria-live="polite"></article>
+    </div>
+  </section>
+
+  <!-- BOOKS -->
+  <section class="panel" id="panel-books" role="tabpanel" aria-labelledby="tab-books" tabindex="0" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">The book nook</p>
+        <h2>Books for Every Mood</h2>
+        <p class="lede">Dragons, detectives, deserts, and poems. Filter by genre, then find your next favourite.</p>
+      </div>
+    </div>
+
+    <div class="chips" id="genre-chips" role="group" aria-label="Filter books by genre"></div>
+    <div class="book-grid" id="book-grid"></div>
+    <p class="game-status" id="book-count" aria-live="polite"></p>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="foot-inner">
+    <div>
+      <p class="foot-brand"><span aria-hidden="true">✦</span> PAULEILA</p>
+      <p class="foot-tag">Made with purple ink, big questions &amp; a little sparkle.</p>
+    </div>
+    <nav class="foot-links" aria-label="Footer">
+      <button type="button" data-jump="jokes">Jokes</button>
+      <button type="button" data-jump="games">Games</button>
+      <button type="button" data-jump="words">Word of the day</button>
+      <button type="button" data-jump="grades">Graders</button>
+      <button type="button" data-jump="books">Books</button>
+    </nav>
+    <p class="copyright">© <span id="year">2026</span> Pauleila. Keep asking why.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
