@@ -34,7 +34,141 @@
   <section class="hero">
     <div class="hero-copy">
       <p class="eyebrow">Welcome to her universe</p>
-      <h1 class="hero-title">PAULEILA</h1>
+      <div class="title-orbit">
+        <canvas class="orbit-glitter" aria-hidden="true"></canvas>
+        <h1 class="hero-title">PAULEILA</h1>
+        <span class="unicorn-orbit" aria-hidden="true">
+          <svg class="unicorn" viewBox="0 0 120 100" focusable="false" role="presentation">
+            <defs>
+              <radialGradient id="uni-body" cx="36%" cy="22%" r="84%">
+                <stop offset="0" stop-color="#ffffff"/>
+                <stop offset=".42" stop-color="#fbf7ff"/>
+                <stop offset=".72" stop-color="#e6d3fb"/>
+                <stop offset="1" stop-color="#b98af0"/>
+              </radialGradient>
+              <linearGradient id="uni-mane" x1="94" y1="12" x2="62" y2="62" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fbcfe8"/>
+                <stop offset=".45" stop-color="#e879f9"/>
+                <stop offset="1" stop-color="#7c3aed"/>
+              </linearGradient>
+              <linearGradient id="uni-mane-light" x1="90" y1="16" x2="74" y2="44" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fdf2f8"/>
+                <stop offset="1" stop-color="#d8b4fe"/>
+              </linearGradient>
+              <linearGradient id="uni-wing" x1="65" y1="41" x2="29" y2="7" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#ffffff"/>
+                <stop offset=".5" stop-color="#f5edff"/>
+                <stop offset=".82" stop-color="#d8b4fe"/>
+                <stop offset="1" stop-color="#a855f7"/>
+              </linearGradient>
+              <linearGradient id="uni-wing-far" x1="62" y1="42" x2="30" y2="14" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e9d5ff"/>
+                <stop offset="1" stop-color="#7c3aed"/>
+              </linearGradient>
+              <linearGradient id="uni-horn" x1="91" y1="17" x2="104" y2="1" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#fff7d6"/>
+                <stop offset=".5" stop-color="#fde68a"/>
+                <stop offset="1" stop-color="#f59e0b"/>
+              </linearGradient>
+              <linearGradient id="uni-hoof" x1="36" y1="78" x2="40" y2="84" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#6d28d9"/>
+                <stop offset="1" stop-color="#2e1065"/>
+              </linearGradient>
+              <linearGradient id="uni-leg-far" x1="46" y1="56" x2="42" y2="82" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#d8b4fe"/>
+                <stop offset="1" stop-color="#a78bfa"/>
+              </linearGradient>
+            </defs>
+
+            <g class="uni-wing uni-wing--far" opacity=".62">
+              <path d="M62 42C54 30 44 20 30 14c6 10 9 19 12 28 6-5 13-4 20 0Z" fill="url(#uni-wing-far)" stroke="#c4b5fd" stroke-width="1" stroke-linejoin="round"/>
+              <path d="M54 38c-7-8-16-14-24-18 7 8 11 15 14 21Z" fill="#a78bfa" opacity=".45"/>
+            </g>
+
+            <g class="uni-tail">
+              <path d="M36 47C26 43 16 48 10 61c8-4 12-3 16-6-5 8-2 17 5 21-4-10 0-19 9-25Z" fill="url(#uni-mane)" opacity=".95"/>
+              <path d="M34 50c-8-1-15 4-19 13" fill="none" stroke="url(#uni-mane-light)" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
+            </g>
+
+            <g class="uni-far-legs" opacity=".72">
+              <g class="uni-leg uni-leg--hind-far" fill="none" stroke="url(#uni-leg-far)" stroke-linecap="round">
+                <path d="M46 55 42 67" stroke-width="7"/>
+                <g class="uni-lower">
+                  <path d="M42 67 41 78" stroke-width="4.8"/>
+                  <path d="M38 78h6v5h-6Z" fill="url(#uni-hoof)" stroke="none"/>
+                </g>
+              </g>
+              <g class="uni-leg uni-leg--front-far" fill="none" stroke="url(#uni-leg-far)" stroke-linecap="round">
+                <path d="M70 53 73 65" stroke-width="7"/>
+                <g class="uni-lower">
+                  <path d="M73 65 74 77" stroke-width="4.8"/>
+                  <path d="M71 77h6v5h-6Z" fill="url(#uni-hoof)" stroke="none"/>
+                </g>
+              </g>
+            </g>
+
+            <g class="uni-body-shape">
+              <ellipse cx="57" cy="52" rx="27" ry="16.5" fill="url(#uni-body)" stroke="#f5edff" stroke-width=".7"/>
+              <path d="M35 57c9 11 35 11 44-1-5 9-17 14-29 13-8-1-13-6-15-12Z" fill="#7c3aed" opacity=".16"/>
+              <ellipse cx="52" cy="45" rx="15" ry="5.6" fill="#ffffff" opacity=".42" transform="rotate(-10 52 45)"/>
+              <path d="M43 42c7-5 21-5 28 1" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity=".5"/>
+            </g>
+
+            <g class="uni-near-legs">
+              <g class="uni-leg uni-leg--hind-near" fill="none" stroke="#f3e8ff" stroke-linecap="round">
+                <path d="M42 56 38 68" stroke-width="7.5"/>
+                <g class="uni-lower">
+                  <path d="M38 68 37 79" stroke-width="5.2"/>
+                  <path d="M34 79h7v5h-7Z" fill="url(#uni-hoof)" stroke="none"/>
+                </g>
+              </g>
+              <g class="uni-leg uni-leg--front-near" fill="none" stroke="#f3e8ff" stroke-linecap="round">
+                <path d="M75 54 78 66" stroke-width="7.5"/>
+                <g class="uni-lower">
+                  <path d="M78 66 79 78" stroke-width="5.2"/>
+                  <path d="M76 78h7v5h-7Z" fill="url(#uni-hoof)" stroke="none"/>
+                </g>
+              </g>
+            </g>
+
+            <g class="uni-wing uni-wing--near">
+              <path d="M65 41C55 27 44 14 29 8c5 11 8 22 12 33 8-5 16-4 24 0Z" fill="url(#uni-wing)" stroke="#f5edff" stroke-width="1.1" stroke-linejoin="round"/>
+              <path d="M58 36c-8-11-16-19-25-24 7 10 11 19 14 28Z" fill="#ffffff" opacity=".28"/>
+              <path d="M54 39c-8-8-16-14-24-17 8 8 12 14 15 20Z" fill="#c084fc" opacity=".5"/>
+              <path d="M48 41c-6-5-12-9-18-11 7 6 10 10 12 14Z" fill="#ffffff" opacity=".22"/>
+              <path d="M65 41c-10-7-18-11-25-12" fill="none" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round" opacity=".55"/>
+            </g>
+
+            <g class="uni-neck-head">
+              <path d="M72 47c2-9 8-18 16-24l9 6c-6 5-10 13-12 21Z" fill="url(#uni-body)" stroke="#e9d5ff" stroke-width=".8"/>
+              <path d="M74 45c2-8 7-15 14-20" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity=".45"/>
+              <path d="M84 27c-1-8 6-13 12-9l8 8c4 2 4 7 0 10l-8 2c-7 0-11-5-12-11Z" fill="url(#uni-body)" stroke="#e9d5ff" stroke-width=".8"/>
+              <ellipse cx="104" cy="32" rx="7.2" ry="5.4" fill="url(#uni-body)" stroke="#e9d5ff" stroke-width=".7"/>
+              <path d="M86 18 83 8l9 7Z" fill="url(#uni-body)" stroke="#e9d5ff" stroke-width=".7"/>
+              <path d="M86 17l-1-6 5 4Z" fill="#f0abfc" opacity=".8"/>
+              <path d="M90 17C94 13 99 7 103 1c-1 7-4 13-7 17Z" fill="url(#uni-horn)" stroke="#fbbf24" stroke-width=".8" stroke-linejoin="round"/>
+              <path d="M93 13c3-2 5-5 7-8M95 10c2-2 4-4 6-7" fill="none" stroke="#fff7d6" stroke-width=".9" stroke-linecap="round" opacity=".8"/>
+              <ellipse cx="94.5" cy="26.5" rx="2" ry="2.6" fill="#2e1065"/>
+              <circle cx="93.9" cy="25.8" r=".7" fill="#ffffff"/>
+              <ellipse cx="108" cy="31" rx="1.2" ry="1.5" fill="#6d28d9" opacity=".8"/>
+              <path d="M97 36c3 1 6 1 9 0" fill="none" stroke="#a855f7" stroke-width=".7" stroke-linecap="round" opacity=".6"/>
+            </g>
+
+            <g class="uni-mane">
+              <path d="M92 16c-8 2-14 10-17 21-2 6-5 11-9 14 8-2 13-8 16-16 3-8 7-14 12-17Z" fill="url(#uni-mane)"/>
+              <path d="M89 20c-7 4-11 12-13 21 4-5 8-10 13-14Z" fill="url(#uni-mane-light)" opacity=".85"/>
+              <path d="M87 23c-6 6-9 14-10 22" fill="none" stroke="#f0abfc" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+              <path d="M92 17c-6 3-11 10-13 18" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+            </g>
+
+            <g class="uni-horn-star" fill="#fde68a">
+              <path d="m106 8 1.2 3.2 3.2 1.2-3.2 1.2L106 17l-1.2-3.4-3.2-1.2 3.2-1.2Z"/>
+              <circle cx="112" cy="14" r=".9"/>
+              <circle cx="100" cy="5" r=".6" fill="#f0abfc"/>
+            </g>
+          </svg>
+        </span>
+      </div>
       <p class="hero-lede">A purple little planet built for one very clever girl — where giggles are a subject, games make you sharper, and every word is worth collecting.</p>
       <div class="hero-cta">
         <button class="btn btn-primary" type="button" data-jump="jokes">Start giggling 😂</button>
@@ -81,6 +215,9 @@
       </button>
       <button class="tab" id="tab-books" type="button" role="tab" aria-selected="false" aria-controls="panel-books" data-panel="books" tabindex="-1">
         <span aria-hidden="true">📚</span> Books
+      </button>
+      <button class="tab" id="tab-bible" type="button" role="tab" aria-selected="false" aria-controls="panel-bible" data-panel="bible" tabindex="-1">
+        <span aria-hidden="true">📖</span> Bible
       </button>
     </nav>
   </div>
@@ -249,6 +386,70 @@
     <div class="book-grid" id="book-grid"></div>
     <p class="game-status" id="book-count" aria-live="polite"></p>
   </section>
+
+  <!-- BIBLE -->
+  <section class="panel" id="panel-bible" role="tabpanel" aria-labelledby="tab-bible" tabindex="0" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">The good word</p>
+        <h2>Gospel of the Day</h2>
+        <p class="lede">The Gospel from today's Mass, ready in a flash. Take a minute, read it slowly, and carry one line with you.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-primary" id="gospel-flash" type="button">Flash it again ✨</button>
+      </div>
+    </div>
+
+    <div class="gospel-layout">
+      <article class="gospel-card" id="gospel-card" aria-busy="true">
+        <div class="gospel-sheen" aria-hidden="true"></div>
+        <div class="gospel-top">
+          <span class="tag">📖 Gospel of the day</span>
+          <time id="gospel-date">Today</time>
+        </div>
+        <p class="gospel-season" id="gospel-season">Loading today's readings…</p>
+        <h3 class="gospel-ref" id="gospel-ref">Gospel</h3>
+        <blockquote class="gospel-text" id="gospel-text" aria-live="polite">Reaching for today's Gospel…</blockquote>
+
+        <div class="gospel-summary" id="gospel-summary">
+          <div class="summary-head">
+            <h4><span aria-hidden="true">✨</span> Gospel in a nutshell</h4>
+            <span class="summary-badge" id="gospel-summary-badge">AI summary</span>
+          </div>
+          <ul class="summary-list" id="gospel-summary-list" aria-live="polite">
+            <li class="summary-placeholder">A short summary will appear here.</li>
+          </ul>
+          <div class="summary-foot">
+            <p class="summary-note" id="gospel-summary-note">A short AI summary. The passage above is the exact text.</p>
+            <button class="summary-retry" id="gospel-summary-retry" type="button" hidden>Try again ↻</button>
+          </div>
+        </div>
+
+        <p class="gospel-notice" id="gospel-notice" hidden></p>
+        <div class="gospel-foot">
+          <span class="meta" id="gospel-source">World English Bible · public domain</span>
+          <div class="gospel-actions">
+            <button class="btn btn-ghost btn-small" id="gospel-retry" type="button" hidden>Try again ↻</button>
+            <a class="btn btn-ghost btn-small" id="gospel-link" href="https://bible.usccb.org/" target="_blank" rel="noopener">Full readings ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <aside class="gospel-side">
+        <h3>Today's readings</h3>
+        <dl class="reading-list">
+          <div><dt>First reading</dt><dd id="gospel-first">—</dd></div>
+          <div><dt>Psalm</dt><dd id="gospel-psalm">—</dd></div>
+          <div><dt>Gospel</dt><dd id="gospel-gospel">—</dd></div>
+        </dl>
+        <div class="genius-tip">
+          <span class="tip-icon" aria-hidden="true">🕊️</span>
+          <p><strong>One-line challenge:</strong> find a single sentence in today's Gospel and carry it with you all day.</p>
+        </div>
+        <p class="tiny">The reading follows today's Mass lectionary. The scripture text is the World English Bible, a public-domain translation, so its wording may differ from your parish's Bible.</p>
+      </aside>
+    </div>
+  </section>
 </main>
 
 <footer class="site-foot">
@@ -263,6 +464,7 @@
       <button type="button" data-jump="words">Word of the day</button>
       <button type="button" data-jump="grades">Graders</button>
       <button type="button" data-jump="books">Books</button>
+      <button type="button" data-jump="bible">Bible</button>
     </nav>
     <p class="copyright">© <span id="year">2026</span> Pauleila. Keep asking why.</p>
   </div>

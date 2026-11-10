@@ -62,6 +62,7 @@
     });
 
     if (name !== "games") endMath(false);
+    if (name === "bible") maybeSummarizeGospel();
 
     if (scroll) {
       const panel = panels.get(name);
@@ -625,6 +626,382 @@
 
   renderBooks();
 
+  /* ---------- Bible: Gospel of the day ---------- */
+
+  const gospelCard = $("#gospel-card");
+  const gospelDateEl = $("#gospel-date");
+  const gospelSeason = $("#gospel-season");
+  const gospelRefEl = $("#gospel-ref");
+  const gospelTextEl = $("#gospel-text");
+  const gospelNotice = $("#gospel-notice");
+  const gospelFirst = $("#gospel-first");
+  const gospelPsalm = $("#gospel-psalm");
+  const gospelGospel = $("#gospel-gospel");
+  const gospelSource = $("#gospel-source");
+  const gospelLink = $("#gospel-link");
+  const gospelRetry = $("#gospel-retry");
+  const gospelSummaryList = $("#gospel-summary-list");
+  const gospelSummaryBadge = $("#gospel-summary-badge");
+  const gospelSummaryNote = $("#gospel-summary-note");
+  const gospelSummaryRetry = $("#gospel-summary-retry");
+
+  const OFFLINE_GOSPEL = {
+    season: "A Gospel to keep close",
+    gospel: "John 3:16-17",
+    firstReading: "",
+    psalm: "",
+    usccbLink: "https://bible.usccb.org/",
+    translation: "World English Bible",
+    verses: [
+      {
+        verse: 16,
+        text: "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life."
+      },
+      {
+        verse: 17,
+        text: "For God didn’t send his Son into the world to judge the world, but that the world should be saved through him."
+      }
+    ],
+    text: "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life. For God didn’t send his Son into the world to judge the world, but that the world should be saved through him."
+  };
+
+  const gospelState = { loading: false, data: null };
+  const summaryState = { loading: false, triedFor: null };
+
+  const todayISO = () => {
+    const now = new Date();
+    return [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, "0"),
+      String(now.getDate()).padStart(2, "0")
+    ].join("-");
+  };
+
+  const formatGospelDate = (iso) => {
+    const date = new Date(iso + "T12:00:00");
+    if (Number.isNaN(date.getTime())) return "Today";
+    return date.toLocaleDateString(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+  };
+
+  function flashGospel() {
+    if (prefersReducedMotion) return;
+    gospelCard.classList.remove("is-flashing");
+    void gospelCard.offsetWidth;
+    gospelCard.classList.add("is-flashing");
+    window.setTimeout(() => gospelCard.classList.remove("is-flashing"), 1600);
+  }
+
+  function renderGospel(data, note = "") {
+    gospelState.data = data;
+    gospelDateEl.textContent = formatGospelDate(data.date || todayISO());
+    gospelSeason.textContent = data.season || "Today's Mass";
+    gospelRefEl.textContent = data.gospel || "Gospel";
+    gospelFirst.textContent = data.firstReading || "—";
+    gospelPsalm.textContent = data.psalm || "—";
+    gospelGospel.textContent = data.gospel || "—";
+    gospelSource.textContent = (data.translation || "World English Bible") + " · public domain";
+
+    gospelTextEl.textContent = "";
+    if (Array.isArray(data.verses) && data.verses.length > 0) {
+      data.verses.forEach((verse) => {
+        const number = document.createElement("sup");
+        number.className = "verse-num";
+        number.textContent = verse.verse;
+        const text = document.createElement("span");
+        text.textContent = verse.text + " ";
+        gospelTextEl.append(number, text);
+      });
+    } else {
+      gospelTextEl.textContent = data.text || "The Gospel text could not be loaded.";
+    }
+
+    const safeLink = typeof data.usccbLink === "string" && data.usccbLink.startsWith("https://bible.usccb.org/")
+      ? data.usccbLink
+      : "https://bible.usccb.org/";
+    gospelLink.href = safeLink;
+
+    if (note) {
+      gospelNotice.textContent = note;
+      gospelNotice.hidden = false;
+      gospelRetry.hidden = false;
+    } else {
+      gospelNotice.hidden = true;
+      gospelRetry.hidden = true;
+    }
+
+    if (Array.isArray(data.summary) && data.summary.length > 0) {
+      renderSummary(data.summary, "ai");
+    } else {
+      setSummaryIdle();
+      maybeSummarizeGospel();
+    }
+
+    gospelCard.setAttribute("aria-busy", "false");
+    flashGospel();
+  }
+
+  function setSummaryIdle() {
+    gospelSummaryList.textContent = "";
+    const line = document.createElement("li");
+    line.className = "summary-placeholder";
+    line.textContent = "A short summary will appear here.";
+    gospelSummaryList.appendChild(line);
+    gospelSummaryBadge.textContent = "AI summary";
+    gospelSummaryNote.textContent = "A short AI summary. The passage above is the exact text.";
+    gospelSummaryRetry.hidden = true;
+    gospelSummaryList.removeAttribute("aria-busy");
+  }
+
+  function setSummaryLoading() {
+    gospelSummaryList.textContent = "";
+    const line = document.createElement("li");
+    line.className = "summary-loading";
+    line.textContent = "Making a short summary…";
+    gospelSummaryList.appendChild(line);
+    gospelSummaryList.setAttribute("aria-busy", "true");
+    gospelSummaryBadge.textContent = "AI summary";
+    gospelSummaryNote.textContent = "Writing a short summary… The Gospel above is ready to read now.";
+    gospelSummaryRetry.hidden = true;
+  }
+
+  function renderSummary(bullets, source = "ai", note = "") {
+    gospelSummaryList.textContent = "";
+    bullets.forEach((bullet) => {
+      const line = document.createElement("li");
+      line.textContent = bullet;
+      gospelSummaryList.appendChild(line);
+    });
+    gospelSummaryList.removeAttribute("aria-busy");
+    gospelSummaryBadge.textContent = source === "ai" ? "AI summary" : "Key lines";
+    gospelSummaryNote.textContent = note || (source === "ai"
+      ? "AI-generated via Pollinations; it may paraphrase. The passage above is the exact text."
+      : "The AI summary isn't available right now, so these are key lines from the passage.");
+    gospelSummaryRetry.hidden = source === "ai";
+  }
+
+  function keyLines(data) {
+    const verses = Array.isArray(data.verses)
+      ? data.verses.filter((verse) => verse && typeof verse.text === "string" && verse.text.trim().length > 25)
+      : [];
+    if (verses.length === 0) return [];
+
+    const picks = [verses[0]];
+    if (verses.length > 2) picks.push(verses[Math.floor(verses.length / 2)]);
+    if (verses.length > 1) picks.push(verses[verses.length - 1]);
+
+    return picks.slice(0, 3).map((verse) => {
+      const text = verse.text.trim().replace(/\s+/g, " ");
+      const clipped = text.length > 185 ? text.slice(0, 182).trimEnd() + "…" : text;
+      return `“${clipped}”`;
+    });
+  }
+
+  function parseSummary(raw) {
+    if (!raw) return [];
+    const cleaned = String(raw)
+      .split(/\r?\n/)
+      .map((line) => line.replace(/^\s*(?:[-*•]|\d+[.)])\s*/, "").replace(/\*\*/g, "").trim())
+      .filter((line) => line.length > 0 && !/^(summary|bullets?|here (is|are))\b/i.test(line));
+
+    let bullets = cleaned;
+    if (bullets.length < 2) {
+      bullets = String(raw)
+        .replace(/\s+/g, " ")
+        .replace(/([.!?])\s+/g, "$1\n")
+        .split(/\n+/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+    }
+
+    return bullets
+      .filter((line) => line.length <= 240)
+      .slice(0, 4)
+      .map((line) => (line.length > 185 ? line.slice(0, 182).trimEnd() + "…" : line));
+  }
+
+  function renderSummaryFallback(data, note) {
+    const lines = keyLines(data);
+    if (lines.length > 0) {
+      renderSummary(lines, "key", note);
+    } else {
+      renderSummary(["A summary isn't available right now. Read the Gospel above."], "key", note);
+    }
+  }
+
+  async function loadGospelSummary(data) {
+    if (!data || summaryState.loading) return;
+    if (Array.isArray(data.summary) && data.summary.length > 0) {
+      renderSummary(data.summary, "ai");
+      return;
+    }
+
+    summaryState.loading = true;
+    summaryState.triedFor = data.date;
+    setSummaryLoading();
+
+    const passage = typeof data.text === "string" && data.text.trim()
+      ? data.text.trim()
+      : (Array.isArray(data.verses) ? data.verses.map((verse) => verse.text).join(" ") : "");
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 90000);
+    const softTimer = window.setTimeout(() => {
+      if (!summaryState.loading) return;
+      renderSummaryFallback(data, "The AI summary is still working. Here are key lines for now.");
+      gospelSummaryRetry.hidden = true;
+    }, 25000);
+
+    try {
+      const response = await fetch("https://text.pollinations.ai/openai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: "openai-fast",
+          messages: [
+            {
+              role: "system",
+              content: "You are a careful catechist. Summarize the Gospel for a 9-year-old in exactly 3 bullet points. Each bullet is one simple sentence under 15 words. Use only facts stated in the passage. Do not add lessons, applications, or ideas. Output only the bullets."
+            },
+            {
+              role: "user",
+              content: `Gospel (${data.gospel || "today's Gospel"}): ${passage}\n\nRead carefully, then return only the 3 bullets.`
+            }
+          ],
+          temperature: 0,
+          max_tokens: 1200
+        })
+      });
+      if (!response.ok) throw new Error("summary service " + response.status);
+
+      const payload = await response.json();
+      const raw = payload && payload.choices && payload.choices[0] && payload.choices[0].message
+        ? payload.choices[0].message.content
+        : "";
+      const bullets = parseSummary(raw);
+      if (bullets.length < 2) throw new Error("summary too short");
+
+      data.summary = bullets;
+      if (!data.offline) store.set("gospel-" + data.date, data);
+      renderSummary(bullets, "ai");
+    } catch (error) {
+      const note = error && error.name === "AbortError"
+        ? "The AI summary took too long, so here are key lines from the passage. You can try again."
+        : "The AI summary isn't available right now, so here are key lines from the passage. You can try again.";
+      renderSummaryFallback(data, note);
+    } finally {
+      window.clearTimeout(timer);
+      window.clearTimeout(softTimer);
+      summaryState.loading = false;
+    }
+  }
+
+  function maybeSummarizeGospel() {
+    if (!gospelState.data) return;
+    if (Array.isArray(gospelState.data.summary) && gospelState.data.summary.length > 0) {
+      renderSummary(gospelState.data.summary, "ai");
+      return;
+    }
+    if (summaryState.loading || summaryState.triedFor === gospelState.data.date) return;
+    loadGospelSummary(gospelState.data);
+  }
+
+  function setGospelLoading() {
+    gospelCard.setAttribute("aria-busy", "true");
+    gospelDateEl.textContent = formatGospelDate(todayISO());
+    gospelSeason.textContent = "Loading today's readings…";
+    gospelRefEl.textContent = "Gospel";
+    gospelTextEl.textContent = "Reaching for today's Gospel…";
+    gospelFirst.textContent = "—";
+    gospelPsalm.textContent = "—";
+    gospelGospel.textContent = "—";
+    gospelNotice.hidden = true;
+    gospelRetry.hidden = true;
+    gospelSource.textContent = "World English Bible · public domain";
+    setSummaryIdle();
+  }
+
+  async function loadGospel({ force = false } = {}) {
+    if (gospelState.loading) return;
+
+    const iso = todayISO();
+    const cacheKey = "gospel-" + iso;
+    const cached = store.get(cacheKey, null);
+    if (cached && !force) {
+      renderGospel(cached);
+      return;
+    }
+
+    gospelState.loading = true;
+    setGospelLoading();
+
+    try {
+      const [year, month, day] = iso.split("-");
+      const readingsResponse = await fetch(
+        `https://cpbjr.github.io/catholic-readings-api/readings/${year}/${month}-${day}.json`,
+        { cache: "no-store" }
+      );
+      if (!readingsResponse.ok) throw new Error("readings unavailable");
+      const readings = await readingsResponse.json();
+      const gospelRef = readings && readings.readings ? readings.readings.gospel : "";
+      if (!gospelRef) throw new Error("no gospel reference");
+
+      const passageResponse = await fetch(
+        "https://bible-api.com/" + encodeURIComponent(gospelRef) + "?translation=web"
+      );
+      if (!passageResponse.ok) throw new Error("passage unavailable");
+      const passage = await passageResponse.json();
+
+      const data = {
+        date: iso,
+        season: readings.season || "",
+        gospel: gospelRef,
+        firstReading: readings.readings.firstReading || "",
+        psalm: readings.readings.psalm || "",
+        secondReading: readings.readings.secondReading || "",
+        usccbLink: readings.usccbLink || "",
+        translation: passage.translation_name || "World English Bible",
+        verses: Array.isArray(passage.verses)
+          ? passage.verses.map((verse) => ({ verse: verse.verse, text: verse.text }))
+          : [],
+        text: typeof passage.text === "string" ? passage.text : ""
+      };
+
+      if (!data.text && data.verses.length === 0) throw new Error("empty passage");
+
+      store.set(cacheKey, data);
+      renderGospel(data);
+    } catch (error) {
+      if (cached) {
+        renderGospel(cached, "You're offline, so this is the Gospel saved for today.");
+      } else {
+        renderGospel(
+          { ...OFFLINE_GOSPEL, date: iso, offline: true },
+          "We couldn't reach today's readings just now. Here is a Gospel to read instead — try again in a moment."
+        );
+      }
+    } finally {
+      gospelState.loading = false;
+      gospelCard.removeAttribute("aria-busy");
+    }
+  }
+
+  $("#gospel-flash").addEventListener("click", () => {
+    if (gospelState.data) flashGospel();
+  });
+  gospelRetry.addEventListener("click", () => loadGospel({ force: true }));
+  gospelSummaryRetry.addEventListener("click", () => {
+    if (!gospelState.data || summaryState.loading) return;
+    summaryState.triedFor = null;
+    loadGospelSummary(gospelState.data);
+  });
+
+  loadGospel();
+
   /* ---------- Game 1: Moonlight Memory ---------- */
 
   const memoryBoard = $("#memory-board");
@@ -988,4 +1365,262 @@
   });
 
   renderScramble();
+
+  /* ---------- Flying unicorn orbit ---------- */
+
+  const orbitHost = $(".title-orbit");
+  const orbitTitle = orbitHost ? $(".hero-title", orbitHost) : null;
+  const orbitUnicorn = orbitHost ? $(".unicorn", orbitHost) : null;
+  const glitterCanvas = orbitHost ? $(".orbit-glitter", orbitHost) : null;
+
+  if (orbitHost && orbitTitle && orbitUnicorn) {
+    const DURATION = 13000;
+    const SHAPES = ["circle", "oval", "infinity"];
+    const glitterCtx = glitterCanvas ? glitterCanvas.getContext("2d") : null;
+    const particles = [];
+    let geometry = null;
+    let frameId = null;
+    let resizeTimer = null;
+    let lastGlitterSpawn = 0;
+    let dpr = 1;
+
+    const orbit = {
+      phase: Math.random() * Math.PI * 2,
+      speed: 1,
+      speedTarget: 1,
+      direction: Math.random() < 0.5 ? 1 : -1,
+      shape: "oval",
+      rx: 0,
+      ry: 0,
+      mix: 0,
+      target: { rx: 0, ry: 0, mix: 0 },
+      nextShapeAt: 0,
+      last: null,
+      facing: 1,
+      prevX: null,
+      prevY: null
+    };
+
+    const sizeGlitter = (width, height) => {
+      if (!glitterCanvas || !glitterCtx) return;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      glitterCanvas.width = Math.max(1, Math.round(width * dpr));
+      glitterCanvas.height = Math.max(1, Math.round(height * dpr));
+      glitterCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const measureOrbit = () => {
+      const host = orbitHost.getBoundingClientRect();
+      const title = orbitTitle.getBoundingClientRect();
+      const viewport = document.documentElement.clientWidth;
+      const glyphW = orbitUnicorn.offsetWidth || 42;
+      const glyphH = orbitUnicorn.offsetHeight || 35;
+      const gutter = 8;
+      const titleCenterX = title.left + title.width / 2;
+      const titleCenterY = title.top + title.height / 2;
+
+      let rx = title.width / 2 + 14 + glyphW / 2;
+      const maxRx = viewport / 2 - glyphW / 2 - gutter;
+      rx = Math.min(rx, Math.max(title.width / 2 + glyphW / 2, maxRx));
+
+      const minCenterX = rx + glyphW / 2 + gutter;
+      const maxCenterX = viewport - gutter - glyphW / 2 - rx;
+      const orbitCenterX = Math.min(Math.max(titleCenterX, minCenterX), maxCenterX);
+      const canvasRect = glitterCanvas ? glitterCanvas.getBoundingClientRect() : null;
+
+      geometry = {
+        baseRx: rx,
+        baseRy: title.height / 2 + 18 + glyphH / 2,
+        dx: orbitCenterX - (host.left + host.width / 2),
+        dy: titleCenterY - (host.top + host.height / 2),
+        cw: host.width,
+        ch: host.height,
+        gx: canvasRect ? host.left - canvasRect.left : 0,
+        gy: canvasRect ? host.top - canvasRect.top : 0,
+        gw: canvasRect ? canvasRect.width : host.width,
+        gh: canvasRect ? canvasRect.height : host.height
+      };
+
+      sizeGlitter(geometry.gw, geometry.gh);
+      if (orbit.rx === 0) {
+        orbit.target = shapeFor(orbit.shape);
+        orbit.rx = orbit.target.rx;
+        orbit.ry = orbit.target.ry;
+        orbit.mix = orbit.target.mix;
+      }
+    };
+
+    function shapeFor(kind) {
+      const g = geometry;
+      if (!g) return { rx: 0, ry: 0, mix: 0 };
+      if (kind === "circle") {
+        const radius = Math.min(g.baseRx, g.baseRy + (orbitUnicorn.offsetHeight || 35) * 1.4, 100);
+        return { rx: radius, ry: radius, mix: 0 };
+      }
+      if (kind === "infinity") {
+        return {
+          rx: g.baseRx * 0.92,
+          ry: Math.max(g.baseRy * 1.55, 82),
+          mix: 1
+        };
+      }
+      return { rx: g.baseRx, ry: g.baseRy, mix: 0 };
+    }
+
+    function chooseShape(now) {
+      const options = SHAPES.filter((shape) => shape !== orbit.shape);
+      orbit.shape = options[Math.floor(Math.random() * options.length)];
+      orbit.target = shapeFor(orbit.shape);
+      orbit.speedTarget = 0.8 + Math.random() * 0.38;
+      orbit.nextShapeAt = now + 9500 + Math.random() * 5500;
+      orbitHost.dataset.orbitShape = orbit.shape;
+    }
+
+    function drawGlitter(x, y, dt, now) {
+      if (!glitterCtx || !geometry) return;
+      glitterCtx.clearRect(0, 0, geometry.gw, geometry.gh);
+      if (prefersReducedMotion) return;
+
+      if (now - lastGlitterSpawn > 16) {
+        lastGlitterSpawn = now;
+        for (let i = 0; i < 2; i += 1) {
+          if (particles.length > 110) particles.shift();
+          particles.push({
+            x: x + (Math.random() - 0.5) * 10,
+            y: y + (Math.random() - 0.5) * 10,
+            vx: (Math.random() - 0.5) * 0.28,
+            vy: (Math.random() - 0.5) * 0.28 + 0.06,
+            life: 1,
+            decay: 0.0009 + Math.random() * 0.0008,
+            size: 1.1 + Math.random() * 2.4,
+            tone: Math.random() < 0.55 ? "gold" : "lilac",
+            spin: Math.random() * Math.PI
+          });
+        }
+      }
+
+      glitterCtx.save();
+      glitterCtx.globalCompositeOperation = "lighter";
+      for (let i = particles.length - 1; i >= 0; i -= 1) {
+        const particle = particles[i];
+        particle.life -= particle.decay * dt;
+        if (particle.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        particle.x += particle.vx * (dt / 16);
+        particle.y += particle.vy * (dt / 16);
+        const alpha = Math.max(0, particle.life);
+        const color = particle.tone === "gold"
+          ? `rgba(253, 230, 138, ${alpha})`
+          : `rgba(240, 171, 252, ${alpha})`;
+        const size = particle.size * (0.55 + particle.life * 0.55);
+
+        glitterCtx.save();
+        glitterCtx.translate(particle.x, particle.y);
+        glitterCtx.rotate(particle.spin);
+        glitterCtx.fillStyle = color;
+        glitterCtx.beginPath();
+        glitterCtx.moveTo(0, -size);
+        glitterCtx.lineTo(size * 0.38, 0);
+        glitterCtx.lineTo(0, size);
+        glitterCtx.lineTo(-size * 0.38, 0);
+        glitterCtx.closePath();
+        glitterCtx.fill();
+        if (size > 2.2) {
+          glitterCtx.globalAlpha = alpha * 0.55;
+          glitterCtx.fillRect(-size * 0.09, -size * 0.75, size * 0.18, size * 1.5);
+          glitterCtx.fillRect(-size * 0.75, -size * 0.09, size * 1.5, size * 0.18);
+          glitterCtx.globalAlpha = 1;
+        }
+        glitterCtx.restore();
+      }
+      glitterCtx.restore();
+    }
+
+    const place = (now) => {
+      if (!geometry) measureOrbit();
+      const dt = orbit.last === null ? 16 : Math.min(Math.max(now - orbit.last, 0), 48);
+      orbit.last = now;
+
+      if (now >= orbit.nextShapeAt) chooseShape(now);
+
+      const ease = 1 - Math.exp(-dt / 700);
+      orbit.rx += (orbit.target.rx - orbit.rx) * ease;
+      orbit.ry += (orbit.target.ry - orbit.ry) * ease;
+      orbit.mix += (orbit.target.mix - orbit.mix) * ease;
+      orbit.speed += (orbit.speedTarget - orbit.speed) * ease;
+
+      orbit.phase += (dt / DURATION) * Math.PI * 2 * orbit.speed * orbit.direction;
+      const angle = orbit.phase;
+      const ellipseX = Math.cos(angle) * orbit.rx;
+      const ellipseY = Math.sin(angle) * orbit.ry;
+      const infinityX = Math.sin(angle) * orbit.rx;
+      const infinityY = Math.sin(angle * 2) * orbit.ry * 0.55;
+      const x = geometry.dx + ellipseX + (infinityX - ellipseX) * orbit.mix;
+      const y = geometry.dy + ellipseY + (infinityY - ellipseY) * orbit.mix;
+
+      let vx = 0;
+      let vy = 0;
+      if (orbit.prevX !== null) {
+        vx = x - orbit.prevX;
+        vy = y - orbit.prevY;
+      }
+      if (vx > 0.12) orbit.facing = 1;
+      else if (vx < -0.12) orbit.facing = -1;
+
+      const bank = Math.max(-14, Math.min(14, (vy / (Math.abs(vx) + 2.2)) * 10)) * orbit.facing;
+      const depth = 0.92 + ((Math.sin(angle) + 1) / 2) * 0.14;
+      orbitUnicorn.style.transform =
+        `translate(-50%, -50%) translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) rotate(${bank.toFixed(2)}deg) scale(${(orbit.facing * depth).toFixed(3)}, ${depth.toFixed(3)})`;
+
+      orbit.prevX = x;
+      orbit.prevY = y;
+
+      drawGlitter(
+        geometry.gx + geometry.cw / 2 + x,
+        geometry.gy + geometry.ch / 2 + y,
+        dt,
+        now
+      );
+
+      if (!prefersReducedMotion) frameId = window.requestAnimationFrame(place);
+    };
+
+    const startOrbit = () => {
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+      orbit.last = null;
+      if (prefersReducedMotion) {
+        place(performance.now());
+        return;
+      }
+      frameId = window.requestAnimationFrame(place);
+    };
+
+    const refreshOrbit = () => {
+      measureOrbit();
+      orbit.target = shapeFor(orbit.shape);
+      if (prefersReducedMotion) place(performance.now());
+    };
+
+    window.addEventListener("resize", () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(refreshOrbit, 120);
+    });
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(refreshOrbit).catch(() => {});
+    }
+
+    measureOrbit();
+    orbit.shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+    orbit.target = shapeFor(orbit.shape);
+    orbit.rx = orbit.target.rx;
+    orbit.ry = orbit.target.ry;
+    orbit.mix = orbit.target.mix;
+    orbit.speed = orbit.speedTarget = 0.82 + Math.random() * 0.32;
+    orbit.nextShapeAt = performance.now() + 9000 + Math.random() * 5000;
+    orbitHost.dataset.orbitShape = orbit.shape;
+    startOrbit();
+  }
 })();
