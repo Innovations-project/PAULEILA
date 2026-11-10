@@ -1621,6 +1621,265 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
 
 #book-count { margin-top: 18px; }
 
+.genre-animals { --cover-a: #c084fc; --cover-b: #3b0764; }
+
+.book-card {
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+.book-card:focus-visible {
+  outline: 2px solid var(--violet-light);
+  outline-offset: 3px;
+}
+.book-read {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--violet-light);
+}
+
+/* ---------- Reader ---------- */
+
+.reader-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(5, 2, 12, 0.78);
+  backdrop-filter: blur(8px);
+}
+.reader-modal[hidden] { display: none; }
+
+.reader {
+  position: relative;
+  width: min(880px, 100%);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid var(--line-strong);
+  background:
+    radial-gradient(600px 260px at 100% 0%, rgba(168, 85, 247, 0.18), transparent 70%),
+    linear-gradient(160deg, rgba(24, 12, 44, 0.98), rgba(8, 4, 16, 0.99));
+  box-shadow: 0 40px 100px -40px rgba(124, 58, 237, 0.9);
+  overflow: hidden;
+}
+
+.reader-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.reader-title-wrap { flex: 1; min-width: 0; }
+.reader-title-wrap .eyebrow { margin-bottom: 4px; }
+.reader-title-wrap h2 {
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  line-height: 1.15;
+  color: #fbf6ff;
+}
+.reader-author {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--violet-light);
+}
+.reader-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.reader-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.18);
+}
+.reader-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--lilac);
+}
+.reader-control select,
+.reader-control input[type="range"] {
+  font: inherit;
+}
+.reader-control select {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(20, 10, 36, 0.8);
+  color: #f9f4ff;
+}
+.reader-control input[type="range"] { width: 120px; }
+.reader-status {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--muted);
+  min-height: 1em;
+}
+
+.reader-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: 8px 4px 8px 2px;
+  scroll-behavior: smooth;
+}
+.reader-text {
+  max-width: 68ch;
+  margin: 0 auto;
+  font-size: 1.06rem;
+  line-height: 1.85;
+  color: #e9ddff;
+}
+.reader-text h3 {
+  margin: 1.6em 0 0.6em;
+  font-size: 1.22rem;
+  line-height: 1.25;
+  color: #fff;
+}
+.reader-text p {
+  margin: 0 0 1.15em;
+}
+.reader-chunk.is-reading {
+  background: rgba(168, 85, 247, 0.16);
+  border-radius: 6px;
+  padding: 0.08em 0.3em;
+  box-shadow: inset 0 0 0 1px rgba(192, 132, 252, 0.25);
+}
+.reader-loading,
+.reader-error {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px 0;
+}
+
+.reader-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid rgba(168, 85, 247, 0.14);
+  font-size: 0.75rem;
+  color: var(--muted-2);
+}
+.reader-foot a {
+  color: var(--violet-light);
+  text-decoration: none;
+  font-weight: 600;
+}
+.reader-foot a:hover { text-decoration: underline; }
+
+/* ---------- Translate ---------- */
+
+.translate-box {
+  max-width: 760px;
+  margin-bottom: 22px;
+}
+.translate-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--violet-light);
+}
+.translate-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.translate-bar input {
+  flex: 1 1 260px;
+  min-width: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(20, 10, 36, 0.7);
+  color: #f9f4ff;
+  font: inherit;
+  font-size: 1rem;
+}
+.translate-bar input:focus {
+  outline: none;
+  border-color: var(--violet-light);
+  box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.2);
+}
+.translate-status {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  min-height: 1.2em;
+}
+.translate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.translate-card {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(26, 13, 47, 0.92), rgba(9, 4, 18, 0.96));
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 150px;
+}
+.translate-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.translate-card-head h3 {
+  font-size: 1.05rem;
+  color: #f9f4ff;
+  margin: 0;
+}
+.translate-flag { font-size: 1.3rem; }
+.translate-native {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--muted-2);
+}
+.translate-text {
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: #fbf6ff;
+  word-break: break-word;
+}
+.translate-loading { color: var(--muted); font-style: italic; }
+.translate-written {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(168, 85, 247, 0.14);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted-2);
+}
+.translate-written-label {
+  font-weight: 700;
+  color: var(--violet-light);
+}
+
 /* ---------- Bible ---------- */
 
 .gospel-layout {
@@ -2051,6 +2310,12 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
   .word-side { padding: 22px; }
 
   .foot-inner { padding: 32px 18px 38px; }
+
+  .reader { padding: 16px; max-height: 100dvh; border-radius: 18px; }
+  .reader-controls { gap: 10px; }
+  .reader-control input[type="range"] { width: 100px; }
+  .reader-status { margin-left: 0; width: 100%; }
+  .translate-bar input { font-size: 0.95rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

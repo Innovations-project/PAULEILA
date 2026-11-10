@@ -178,7 +178,7 @@
         <div><dt>Jokes</dt><dd>17</dd></div>
         <div><dt>Mini games</dt><dd>3</dd></div>
         <div><dt>Grades</dt><dd>6</dd></div>
-        <div><dt>Books</dt><dd>14</dd></div>
+        <div><dt>Books</dt><dd>10</dd></div>
       </dl>
     </div>
 
@@ -193,8 +193,7 @@
         </div>
       </div>
       <span class="float-chip c1">😂 funny jokes</span>
-      <span class="float-chip c2">🎮 quick games</span>
-      <span class="float-chip c3">📖 14 books</span>
+      <span class="float-chip c2">🎮 quick games</span>        <span class="float-chip c3">📖 10 free books</span>
       <span class="float-chip c4">✨ word of the day</span>
     </div>
   </section>
@@ -218,6 +217,9 @@
       </button>
       <button class="tab" id="tab-bible" type="button" role="tab" aria-selected="false" aria-controls="panel-bible" data-panel="bible" tabindex="-1">
         <span aria-hidden="true">📖</span> Bible
+      </button>
+      <button class="tab" id="tab-translate" type="button" role="tab" aria-selected="false" aria-controls="panel-translate" data-panel="translate" tabindex="-1">
+        <span aria-hidden="true">🌐</span> Translate
       </button>
     </nav>
   </div>
@@ -376,9 +378,9 @@
   <section class="panel" id="panel-books" role="tabpanel" aria-labelledby="tab-books" tabindex="0" hidden>
     <div class="panel-head">
       <div>
-        <p class="eyebrow">The book nook</p>
-        <h2>Books for Every Mood</h2>
-        <p class="lede">Dragons, detectives, deserts, and poems. Filter by genre, then find your next favourite.</p>
+        <p class="eyebrow">The free book nook</p>
+        <h2>Free Books to Read &amp; Listen</h2>
+        <p class="lede">Ten complete public-domain stories. Tap a book to read the whole thing, or let the narrator read it aloud.</p>
       </div>
     </div>
 
@@ -450,6 +452,29 @@
       </aside>
     </div>
   </section>
+
+  <!-- TRANSLATE -->
+  <section class="panel" id="panel-translate" role="tabpanel" aria-labelledby="tab-translate" tabindex="0" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">The word bridge</p>
+        <h2>Translate</h2>
+        <p class="lede">Type a word, number, or phrase in English. See it in Spanish, Korean, Japanese, and Chinese, with how each one is written.</p>
+      </div>
+    </div>
+
+    <div class="translate-box">
+      <label class="translate-label" for="translate-input">English text</label>
+      <div class="translate-bar">
+        <input id="translate-input" type="text" placeholder="e.g. Good morning, 42, thank you" autocomplete="off" />
+        <button class="btn btn-primary" id="translate-go" type="button">Translate ✨</button>
+      </div>
+      <p class="translate-status" id="translate-status" aria-live="polite">Type something and press Enter.</p>
+    </div>
+
+    <div class="translate-grid" id="translate-grid"></div>
+    <p class="tiny">Translations are AI-generated and may not be perfect. “How it’s written” shows pronunciation or romanization.</p>
+  </section>
 </main>
 
 <footer class="site-foot">
@@ -465,10 +490,50 @@
       <button type="button" data-jump="grades">Graders</button>
       <button type="button" data-jump="books">Books</button>
       <button type="button" data-jump="bible">Bible</button>
+      <button type="button" data-jump="translate">Translate</button>
     </nav>
     <p class="copyright">© <span id="year">2026</span> Pauleila. Keep asking why.</p>
   </div>
 </footer>
+
+<!-- READER -->
+<div class="reader-modal" id="reader-modal" hidden>
+  <div class="reader-backdrop" data-reader-close></div>
+  <article class="reader" role="dialog" aria-modal="true" aria-labelledby="reader-title" tabindex="-1">
+    <header class="reader-head">
+      <div class="reader-title-wrap">
+        <p class="eyebrow">Free book · Public domain</p>
+        <h2 id="reader-title">Title</h2>
+        <p class="reader-author" id="reader-author"></p>
+      </div>
+      <div class="reader-actions">
+        <button class="btn btn-ghost btn-small" id="reader-play" type="button">🔊 Read aloud</button>
+        <button class="btn btn-ghost btn-small" id="reader-stop" type="button" hidden>⏹ Stop</button>
+        <button class="btn btn-ghost btn-small" id="reader-close" type="button" aria-label="Close reader">✕</button>
+      </div>
+    </header>
+    <div class="reader-controls">
+      <label class="reader-control">Voice
+        <select id="reader-voice"></select>
+      </label>
+      <label class="reader-control">Speed
+        <input id="reader-rate" type="range" min="0.7" max="1.3" step="0.05" value="0.95" />
+        <span id="reader-rate-value">0.95×</span>
+      </label>
+      <label class="reader-control" id="reader-chapter-wrap">Chapter
+        <select id="reader-chapter"></select>
+      </label>
+      <span class="reader-status" id="reader-status" role="status" aria-live="polite"></span>
+    </div>
+    <div class="reader-scroll" id="reader-scroll">
+      <div class="reader-text" id="reader-text"></div>
+    </div>
+    <footer class="reader-foot">
+      <span>Source: Project Gutenberg (public domain in the U.S.)</span>
+      <a id="reader-source" href="#" target="_blank" rel="noopener">View on Gutenberg ↗</a>
+    </footer>
+  </article>
+</div>
 
 <script src="app.js"></script>
 </body>

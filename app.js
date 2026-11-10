@@ -438,147 +438,26 @@
     gradePicker.appendChild(button);
   });
 
-  renderGrade(0);
-
-  /* ---------- Books ---------- */
+  renderGrade(0);  /* ---------- Books ---------- */
 
   const genres = [
     { id: "all", label: "All genres", emoji: "✦" },
     { id: "fantasy", label: "Fantasy", emoji: "🐉" },
-    { id: "mystery", label: "Mystery", emoji: "🔍" },
     { id: "adventure", label: "Adventure", emoji: "🧭" },
-    { id: "science", label: "Science", emoji: "🚀" },
-    { id: "humor", label: "Humor", emoji: "😂" },
-    { id: "poetry", label: "Poetry", emoji: "🌿" }
+    { id: "animals", label: "Animals", emoji: "🐾" }
   ];
 
   const books = [
-    {
-      title: "The Girl Who Drank the Moon",
-      author: "Kelly Barnhill",
-      genre: "fantasy",
-      ages: "9–12",
-      emoji: "🌙",
-      blurb: "A witch, a swamp monster, a perfectly tiny dragon, and a girl filled with moonlight.",
-      spark: "Read it for the feeling that magic is hiding just past the edge of the map."
-    },
-    {
-      title: "Amari and the Night Brothers",
-      author: "B. B. Alston",
-      genre: "fantasy",
-      ages: "9–12",
-      emoji: "✨",
-      blurb: "A hidden bureau of magic, a missing brother, and a girl who refuses to give up.",
-      spark: "A fast, funny adventure with a heroine who keeps choosing brave."
-    },
-    {
-      title: "The Mysterious Benedict Society",
-      author: "Trenton Lee Stewart",
-      genre: "mystery",
-      ages: "9–12",
-      emoji: "🔍",
-      blurb: "Four extraordinary kids, one peculiar test, and a school hiding a very strange secret.",
-      spark: "A puzzle box of a book — perfect for a mind that notices everything."
-    },
-    {
-      title: "Greenglass House",
-      author: "Kate Milford",
-      genre: "mystery",
-      ages: "9–12",
-      emoji: "🏠",
-      blurb: "A snowbound inn, a house full of secrets, and a girl born to solve them.",
-      spark: "Cozy and clever at the same time, like a mystery told beside a fireplace."
-    },
-    {
-      title: "Nancy Drew: The Secret of the Old Clock",
-      author: "Carolyn Keene",
-      genre: "mystery",
-      ages: "8–12",
-      emoji: "🕵️",
-      blurb: "The original girl detective, a blue roadster, and a mystery that will not stay shut.",
-      spark: "Meet the detective who made generations of girls want a magnifying glass."
-    },
-    {
-      title: "The Explorer",
-      author: "Katherine Rundell",
-      genre: "adventure",
-      ages: "8–12",
-      emoji: "🧭",
-      blurb: "Four kids, a crashed plane, and a jungle that keeps its own rules.",
-      spark: "Wild, funny, and full of the feeling that you could survive almost anything."
-    },
-    {
-      title: "Holes",
-      author: "Louis Sachar",
-      genre: "adventure",
-      ages: "9–12",
-      emoji: "🕳️",
-      blurb: "Digging holes in the desert — and unearthing a family curse that connects everything.",
-      spark: "Every clue snaps into place. Read it once for the story, twice for the trick."
-    },
-    {
-      title: "Journey to the River Sea",
-      author: "Eva Ibbotson",
-      genre: "adventure",
-      ages: "9–12",
-      emoji: "🛶",
-      blurb: "A girl, a boat, and the Amazon waiting to be discovered.",
-      spark: "For anyone who has ever wanted to trade a tidy room for a wild river."
-    },
-    {
-      title: "The Thing About Jellyfish",
-      author: "Ali Benjamin",
-      genre: "science",
-      ages: "10–13",
-      emoji: "🪼",
-      blurb: "Grief, jellyfish, and a scientist's mind learning how to feel.",
-      spark: "Proof that facts and feelings can live in the same brilliant brain."
-    },
-    {
-      title: "George's Secret Key to the Universe",
-      author: "Lucy & Stephen Hawking",
-      genre: "science",
-      ages: "8–12",
-      emoji: "🚀",
-      blurb: "A supercomputer, a space adventure, and real science tucked into every chapter.",
-      spark: "The rare book that makes physics feel like a trip with your funniest friend."
-    },
-    {
-      title: "Sideways Stories from Wayside School",
-      author: "Louis Sachar",
-      genre: "humor",
-      ages: "7–11",
-      emoji: "🏫",
-      blurb: "A school thirty stories tall where the weirdest things are completely normal.",
-      spark: "Thirty tiny chapters of pure nonsense — in the best possible way."
-    },
-    {
-      title: "The Terrible Two",
-      author: "Mac Barnett & Jory John",
-      genre: "humor",
-      ages: "8–12",
-      emoji: "😼",
-      blurb: "A prank war between a local legend and the new kid who wants the crown.",
-      spark: "Very funny, slightly sneaky, and full of ideas you should not try at school."
-    },
-    {
-      title: "Where the Sidewalk Ends",
-      author: "Shel Silverstein",
-      genre: "poetry",
-      ages: "7–11",
-      emoji: "🌿",
-      blurb: "Silly, strange, and secretly wise poems about everything from homework to hugging.",
-      spark: "The fastest way to discover that poetry can be funny and a little bit wild."
-    },
-    {
-      title: "Out of Wonder: Poems Celebrating Poets",
-      author: "Kwame Alexander",
-      genre: "poetry",
-      ages: "9–12",
-      emoji: "🎨",
-      blurb: "Poems that celebrate the poets who came before, each one a different colour of voice.",
-      spark: "A gallery of poems — read one aloud before bed and let it sit with you."
-    }
+    { id: "alice", title: "Alice’s Adventures in Wonderland", author: "Lewis Carroll", genre: "fantasy", ages: "8–12", emoji: "🐇", blurb: "Fall down the rabbit-hole with Alice and meet the Cheshire Cat, the Mad Hatter and the Queen of Hearts.", spark: "The book that made nonsense feel like an adventure.", gutenberg: 11, file: "books/alice.txt" },
+    { id: "oz", title: "The Wonderful Wizard of Oz", author: "L. Frank Baum", genre: "fantasy", ages: "7–11", emoji: "🌪️", blurb: "Dorothy, Toto and new friends follow the yellow brick road to the Emerald City.", spark: "A road, a wish, and friends who already have what they need.", gutenberg: 55, file: "books/oz.txt" },
+    { id: "jungle-book", title: "The Jungle Book", author: "Rudyard Kipling", genre: "adventure", ages: "9–12", emoji: "🐯", blurb: "Mowgli grows up among the wolves, bears and panthers of the Indian jungle.", spark: "Wild, fierce, and full of the jungle's own rules.", gutenberg: 236, file: "books/jungle-book.txt" },
+    { id: "secret-garden", title: "The Secret Garden", author: "Frances Hodgson Burnett", genre: "adventure", ages: "8–12", emoji: "🌹", blurb: "Mary Lennox finds a hidden garden and helps a sickly boy learn to live again.", spark: "A hidden door, fresh air, and the courage to grow.", gutenberg: 17396, file: "books/secret-garden.txt" },
+    { id: "little-princess", title: "A Little Princess", author: "Frances Hodgson Burnett", genre: "adventure", ages: "8–12", emoji: "👑", blurb: "Sara Crewe stays kind and brave even when she loses everything.", spark: "Kindness is its own kind of bravery.", gutenberg: 146, file: "books/little-princess.txt" },
+    { id: "wind-willows", title: "The Wind in the Willows", author: "Kenneth Grahame", genre: "animals", ages: "7–11", emoji: "🚣", blurb: "Mole, Rat, Toad and Badger share river days, wild rides and cosy homes.", spark: "Slow river days and the comfort of home.", gutenberg: 289, file: "books/wind-willows.txt" },
+    { id: "treasure-island", title: "Treasure Island", author: "Robert Louis Stevenson", genre: "adventure", ages: "10–13", emoji: "🏴‍☠️", blurb: "Jim Hawkins sails for buried treasure and meets the unforgettable Long John Silver.", spark: "Maps, mutiny, and a pirate you can't forget.", gutenberg: 120, file: "books/treasure-island.txt" },
+    { id: "black-beauty", title: "Black Beauty", author: "Anna Sewell", genre: "animals", ages: "8–12", emoji: "🐴", blurb: "A horse tells his own life story, from a kind home to hard work and back again.", spark: "A horse's whole life, told in his own voice.", gutenberg: 271, file: "books/black-beauty.txt" },
+    { id: "velveteen-rabbit", title: "The Velveteen Rabbit", author: "Margery Williams", genre: "animals", ages: "5–9", emoji: "🧸", blurb: "A stuffed rabbit learns what it means to become Real through love.", spark: "What it really means to become Real.", gutenberg: 11757, file: "books/velveteen-rabbit.txt" },
+    { id: "happy-prince", title: "The Happy Prince and Other Tales", author: "Oscar Wilde", genre: "fantasy", ages: "7–11", emoji: "✨", blurb: "A golden statue and a little swallow give everything they have to help others.", spark: "Giving everything away, one small kindness at a time.", gutenberg: 902, file: "books/happy-prince.txt" }
   ];
 
   const genreChips = $("#genre-chips");
@@ -586,27 +465,279 @@
   const bookCount = $("#book-count");
   let activeGenre = "all";
 
+  const esc = (value) => String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+  /* ---------- Reader ---------- */
+
+  const readerModal = $("#reader-modal");
+  const readerTitle = $("#reader-title");
+  const readerAuthor = $("#reader-author");
+  const readerText = $("#reader-text");
+  const readerScroll = $("#reader-scroll");
+  const readerSource = $("#reader-source");
+  const readerPlay = $("#reader-play");
+  const readerStop = $("#reader-stop");
+  const readerClose = $("#reader-close");
+  const readerVoice = $("#reader-voice");
+  const readerRate = $("#reader-rate");
+  const readerRateValue = $("#reader-rate-value");
+  const readerChapter = $("#reader-chapter");
+  const readerChapterWrap = $("#reader-chapter-wrap");
+  const readerStatus = $("#reader-status");
+
+  const bookTextCache = new Map();
+  let readerChunks = [];
+  let readerChapterStarts = [];
+  let readerChunkIndex = 0;
+  let readerSpeaking = false;
+  let readerPaused = false;
+
+  function parseBookText(raw) {
+    const blocks = raw.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean);
+    const chunks = [];
+    const chapterStarts = [];
+    for (const block of blocks) {
+      if (block.startsWith("# ")) {
+        const heading = block.slice(2).trim();
+        chapterStarts.push({ index: chunks.length, title: heading });
+        chunks.push({ type: "h", text: heading });
+      } else {
+        chunks.push({ type: "p", text: block });
+      }
+    }
+    if (chapterStarts.length === 0) chapterStarts.push({ index: 0, title: "Story" });
+    return { chunks, chapterStarts };
+  }
+
+  function renderReader() {
+    readerText.innerHTML = readerChunks.map((chunk, index) => {
+      const className = "reader-chunk";
+      if (chunk.type === "h") {
+        return `<h3 class="${className}" data-chunk="${index}">${esc(chunk.text)}</h3>`;
+      }
+      return `<p class="${className}" data-chunk="${index}">${esc(chunk.text)}</p>`;
+    }).join("");
+  }
+
+  function updateChapterSelect() {
+    if (readerChapterStarts.length > 1) {
+      readerChapterWrap.hidden = false;
+      readerChapter.innerHTML = readerChapterStarts.map((chapter, index) =>
+        `<option value="${index}">${esc(chapter.title)}</option>`
+      ).join("");
+    } else {
+      readerChapterWrap.hidden = true;
+      readerChapter.innerHTML = "";
+    }
+  }
+
+  function loadVoices() {
+    if (!("speechSynthesis" in window)) return;
+    const english = speechSynthesis.getVoices().filter((voice) => /^en/i.test(voice.lang));
+    const list = english.length ? english : speechSynthesis.getVoices();
+    readerVoice.innerHTML = list.map((voice, index) =>
+      `<option value="${index}">${esc(voice.name)} (${voice.lang})</option>`
+    ).join("");
+    readerVoice._voices = list;
+  }
+
+  if ("speechSynthesis" in window) {
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  } else {
+    readerPlay.hidden = true;
+    readerVoice.parentElement.hidden = true;
+    readerRate.parentElement.hidden = true;
+    readerStatus.textContent = "Read-aloud is not supported in this browser.";
+  }
+
+  function selectedVoice() {
+    const list = readerVoice._voices || [];
+    const index = Number(readerVoice.value || 0);
+    return list[index] || null;
+  }
+
+  function setReaderStatus(message) {
+    readerStatus.textContent = message;
+  }
+
+  function highlightChunk(index) {
+    $$(".reader-chunk", readerText).forEach((element) => element.classList.remove("is-reading"));
+    const element = readerText.querySelector(`[data-chunk="${index}"]`);
+    if (element) {
+      element.classList.add("is-reading");
+      element.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }
+
+  function finishSpeaking() {
+    readerSpeaking = false;
+    readerPaused = false;
+    readerChunkIndex = 0;
+    readerPlay.textContent = "🔊 Read aloud";
+    readerStop.hidden = true;
+    setReaderStatus("Finished.");
+    $$(".reader-chunk", readerText).forEach((element) => element.classList.remove("is-reading"));
+  }
+
+  function speakNext() {
+    if (!readerSpeaking || readerPaused) return;
+    if (readerChunkIndex >= readerChunks.length) {
+      finishSpeaking();
+      return;
+    }
+    const chunk = readerChunks[readerChunkIndex];
+    const utterance = new SpeechSynthesisUtterance(chunk.text);
+    const voice = selectedVoice();
+    if (voice) utterance.voice = voice;
+    utterance.rate = Number(readerRate.value || 0.95);
+    utterance.onstart = () => highlightChunk(readerChunkIndex);
+    utterance.onend = () => {
+      readerChunkIndex += 1;
+      speakNext();
+    };
+    utterance.onerror = (event) => {
+      if (event.error === "interrupted" || event.error === "canceled") return;
+      setReaderStatus("Voice error: " + event.error);
+      finishSpeaking();
+    };
+    speechSynthesis.speak(utterance);
+    setReaderStatus(`Reading ${readerChunkIndex + 1} of ${readerChunks.length}`);
+  }
+
+  function startSpeaking(fromIndex) {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    readerChunkIndex = Math.max(0, Math.min(fromIndex, readerChunks.length - 1));
+    readerSpeaking = true;
+    readerPaused = false;
+    readerPlay.textContent = "⏸ Pause";
+    readerStop.hidden = false;
+    speakNext();
+  }
+
+  function togglePlay() {
+    if (!readerSpeaking) {
+      startSpeaking(readerChunkIndex);
+      return;
+    }
+    if (readerPaused) {
+      readerPaused = false;
+      speechSynthesis.resume();
+      readerPlay.textContent = "⏸ Pause";
+      setReaderStatus(`Reading ${readerChunkIndex + 1} of ${readerChunks.length}`);
+    } else {
+      readerPaused = true;
+      speechSynthesis.pause();
+      readerPlay.textContent = "▶ Resume";
+      setReaderStatus("Paused.");
+    }
+  }
+
+  function stopSpeaking() {
+    if ("speechSynthesis" in window) speechSynthesis.cancel();
+    readerSpeaking = false;
+    readerPaused = false;
+    readerChunkIndex = 0;
+    readerPlay.textContent = "🔊 Read aloud";
+    readerStop.hidden = true;
+    setReaderStatus("Stopped.");
+    $$(".reader-chunk", readerText).forEach((element) => element.classList.remove("is-reading"));
+  }
+
+  async function openBook(id) {
+    const book = books.find((item) => item.id === id);
+    if (!book) return;
+    readerTitle.textContent = book.title;
+    readerAuthor.textContent = book.author;
+    readerSource.href = `https://www.gutenberg.org/ebooks/${book.gutenberg}`;
+    readerText.innerHTML = '<p class="reader-loading">Loading the full story…</p>';
+    readerChapterWrap.hidden = true;
+    readerChapter.innerHTML = "";
+    readerModal.hidden = false;
+    document.body.style.overflow = "hidden";
+    readerClose.focus();
+    stopSpeaking();
+    try {
+      let text = bookTextCache.get(book.id);
+      if (!text) {
+        const response = await fetch(book.file);
+        if (!response.ok) throw new Error("Could not load this book.");
+        text = await response.text();
+        bookTextCache.set(book.id, text);
+      }
+      const parsed = parseBookText(text);
+      readerChunks = parsed.chunks;
+      readerChapterStarts = parsed.chapterStarts;
+      renderReader();
+      updateChapterSelect();
+      setReaderStatus(`${readerChunks.length} paragraphs. Press “Read aloud” to listen.`);
+    } catch (error) {
+      readerText.innerHTML = `<p class="reader-error">${esc(error.message || "Could not load this book.")}</p><button class="btn btn-ghost btn-small" id="reader-retry" type="button">Try again ↻</button>`;
+      const retry = $("#reader-retry");
+      if (retry) retry.addEventListener("click", () => openBook(id));
+    }
+  }
+
+  function closeReader() {
+    stopSpeaking();
+    readerModal.hidden = true;
+    document.body.style.overflow = "";
+  }
+
+  readerClose.addEventListener("click", closeReader);
+  readerModal.querySelector(".reader-backdrop").addEventListener("click", closeReader);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !readerModal.hidden) closeReader();
+  });
+  readerPlay.addEventListener("click", togglePlay);
+  readerStop.addEventListener("click", stopSpeaking);
+  readerRate.addEventListener("input", () => {
+    readerRateValue.textContent = Number(readerRate.value).toFixed(2) + "×";
+    if (readerSpeaking && !readerPaused) startSpeaking(readerChunkIndex);
+  });
+  readerVoice.addEventListener("change", () => {
+    if (readerSpeaking && !readerPaused) startSpeaking(readerChunkIndex);
+  });
+  readerChapter.addEventListener("change", () => {
+    const chapterIndex = Number(readerChapter.value || 0);
+    const start = readerChapterStarts[chapterIndex]?.index ?? 0;
+    readerChunkIndex = start;
+    const target = readerText.querySelector(`[data-chunk="${start}"]`);
+    if (target) target.scrollIntoView({ block: "start" });
+    if (readerSpeaking) startSpeaking(start);
+    else setReaderStatus(`Chapter ${chapterIndex + 1}. Press “Read aloud” to listen.`);
+  });
+
   function renderBooks() {
     const list = activeGenre === "all" ? books : books.filter((book) => book.genre === activeGenre);
     bookGrid.innerHTML = list.map((book) => {
       const genreLabel = genres.find((g) => g.id === book.genre).label;
       return `
-        <article class="book-card genre-${book.genre}">
+        <button type="button" class="book-card genre-${book.genre}" data-book="${book.id}" aria-label="Read ${esc(book.title)}">
           <div class="book-cover">
             <span class="book-emoji" aria-hidden="true">${book.emoji}</span>
             <span class="book-genre-tag">${genreLabel}</span>
           </div>
           <div class="book-body">
-            <h3>${book.title}</h3>
-            <p class="book-author">${book.author}</p>
-            <p class="book-blurb">${book.blurb}</p>
-            <p class="book-spark">✨ ${book.spark}</p>
-            <div class="book-meta"><span>Ages ${book.ages}</span><span>${genreLabel}</span></div>
+            <h3>${esc(book.title)}</h3>
+            <p class="book-author">${esc(book.author)}</p>
+            <p class="book-blurb">${esc(book.blurb)}</p>
+            <p class="book-spark">✨ ${esc(book.spark)}</p>
+            <div class="book-meta"><span>Ages ${esc(book.ages)}</span><span>Free · Public domain</span></div>
+            <span class="book-read">Read the whole story →</span>
           </div>
-        </article>
+        </button>
       `;
     }).join("");
-    bookCount.textContent = `Showing ${list.length} of ${books.length} books.`;
+    $$(".book-card", bookGrid).forEach((card) => {
+      card.addEventListener("click", () => openBook(card.dataset.book));
+    });
+    bookCount.textContent = `Showing ${list.length} of ${books.length} free books.`;
   }
 
   genres.forEach((genre) => {
@@ -625,6 +756,133 @@
   });
 
   renderBooks();
+
+  /* ---------- Translate ---------- */
+
+  const translateInput = $("#translate-input");
+  const translateGo = $("#translate-go");
+  const translateStatus = $("#translate-status");
+  const translateGrid = $("#translate-grid");
+
+  const translateLangs = [
+    { code: "es", name: "Spanish", flag: "🇪🇸", note: "español" },
+    { code: "ko", name: "Korean", flag: "🇰🇷", note: "한국어" },
+    { code: "ja", name: "Japanese", flag: "🇯🇵", note: "日本語" },
+    { code: "zh", name: "Chinese", flag: "🇨🇳", note: "中文" }
+  ];
+
+  const translateCache = new Map();
+
+  function renderTranslateLoading() {
+    translateGrid.innerHTML = translateLangs.map((lang) => `
+      <article class="translate-card">
+        <div class="translate-card-head"><span class="translate-flag">${lang.flag}</span><h3>${lang.name}</h3></div>
+        <p class="translate-text translate-loading">Translating…</p>
+        <p class="translate-written"></p>
+      </article>
+    `).join("");
+  }
+
+  function renderTranslateResult(data) {
+    translateGrid.innerHTML = translateLangs.map((lang) => {
+      const item = (data && data[lang.code]) || {};
+      const translation = item.translation || "—";
+      const written = item.written || "";
+      return `
+        <article class="translate-card">
+          <div class="translate-card-head"><span class="translate-flag">${lang.flag}</span><h3>${lang.name}</h3><span class="translate-native">${lang.note}</span></div>
+          <p class="translate-text">${esc(translation)}</p>
+          <p class="translate-written"><span class="translate-written-label">How it’s written:</span> ${esc(written || "—")}</p>
+        </article>
+      `;
+    }).join("");
+  }
+
+  async function doTranslate() {
+    const text = (translateInput.value || "").trim();
+    if (!text) {
+      translateStatus.textContent = "Type a word, number, or phrase first.";
+      return;
+    }
+    const cached = translateCache.get(text);
+    if (cached) {
+      renderTranslateResult(cached);
+      translateStatus.textContent = "Translated (cached).";
+      return;
+    }
+    try {
+      const stored = localStorage.getItem("pauleila:translate:" + text);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        translateCache.set(text, parsed);
+        renderTranslateResult(parsed);
+        translateStatus.textContent = "Translated (cached).";
+        return;
+      }
+    } catch (error) {
+      /* ignore bad cache */
+    }
+    renderTranslateLoading();
+    translateStatus.textContent = "Translating…";
+    const prompt = `Translate the following English text into Spanish, Korean, Japanese, and Simplified Chinese. Return ONLY valid JSON with this exact shape:
+{"es":{"translation":"...","written":"..."},"ko":{"translation":"...","written":"..."},"ja":{"translation":"...","written":"..."},"zh":{"translation":"...","written":"..."}}
+Rules:
+- "translation" is the natural translation in the target language's native script.
+- "written" is how it is written or pronounced for a learner: Spanish pronunciation in plain Latin letters; Korean revised romanization; Japanese romaji; Chinese pinyin with tone marks.
+- Keep numbers, names and meaning accurate.
+- No markdown, no extra text.
+
+English: ${JSON.stringify(text)}`;
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 45000);
+      const response = await fetch("https://text.pollinations.ai/openai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "openai-fast",
+          temperature: 0,
+          max_tokens: 600,
+          messages: [
+            { role: "system", content: "You are a precise translator. Output only JSON." },
+            { role: "user", content: prompt }
+          ]
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+      if (!response.ok) throw new Error("Translation service returned " + response.status);
+      const data = await response.json();
+      const raw = data?.choices?.[0]?.message?.content || "";
+      const cleaned = raw.replace(/```json/gi, "").replace(/```/g, "").trim();
+      const match = cleaned.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error("No JSON in response");
+      const parsed = JSON.parse(match[0]);
+      for (const lang of translateLangs) {
+        if (!parsed[lang.code]) parsed[lang.code] = { translation: "—", written: "" };
+      }
+      translateCache.set(text, parsed);
+      try {
+        localStorage.setItem("pauleila:translate:" + text, JSON.stringify(parsed));
+      } catch (error) {
+        /* storage may be blocked */
+      }
+      renderTranslateResult(parsed);
+      translateStatus.textContent = "Translated.";
+    } catch (error) {
+      translateGrid.innerHTML = "";
+      translateStatus.textContent = "Could not translate right now. Please try again.";
+    }
+  }
+
+  translateGo.addEventListener("click", doTranslate);
+  translateInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      doTranslate();
+    }
+  });
+
 
   /* ---------- Bible: Gospel of the day ---------- */
 
