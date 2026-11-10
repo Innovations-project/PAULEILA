@@ -768,7 +768,9 @@
     { code: "es", name: "Spanish", flag: "🇪🇸", note: "español" },
     { code: "ko", name: "Korean", flag: "🇰🇷", note: "한국어" },
     { code: "ja", name: "Japanese", flag: "🇯🇵", note: "日本語" },
-    { code: "zh", name: "Chinese", flag: "🇨🇳", note: "中文" }
+    { code: "zh", name: "Chinese", flag: "🇨🇳", note: "中文" },
+    { code: "it", name: "Italian", flag: "🇮🇹", note: "italiano" },
+    { code: "ar", name: "Arabic", flag: "🇸🇦", note: "العربية" }
   ];
 
   const translateCache = new Map();
