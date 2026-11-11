@@ -449,7 +449,6 @@
   const wisdomMessage = $("#wisdom-message");
   const wisdomSub = $("#wisdom-sub");
   const wisdomHint = $("#wisdom-hint");
-  const wisdomCard = $("#wisdom-card");
   const wisdomCount = $("#wisdom-count");
   const wisdomReset = $("#wisdom-reset");
 
@@ -483,18 +482,15 @@
   let wisdomLast = -1;
   let wisdomReveals = 0;
   let wisdomTimer = null;
-  let wisdomGlowTimer = null;
 
   function revealWisdom() {
     if (!wisdomBall || wisdomBall.classList.contains("is-shaking")) return;
 
     clearTimeout(wisdomTimer);
-    clearTimeout(wisdomGlowTimer);
     wisdomBall.classList.remove("is-lit");
-    wisdomBallText.textContent = "8";
-    wisdomCard.classList.remove("is-revealing");
-    wisdomBall.classList.add("is-shaking");
+    wisdomBall.classList.add("is-shaking", "has-answer");
     wisdomBall.setAttribute("aria-busy", "true");
+    wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
     wisdomHint.textContent = "Shaking the ball…";
     wisdomMessage.textContent = "…";
     wisdomSub.textContent = "Listening for a little light.";
@@ -509,20 +505,16 @@
 
       wisdomReveals += 1;
       wisdomMessage.textContent = fortune.text;
+      wisdomMessage.classList.toggle("is-long", fortune.text.length > 32);
+      wisdomMessage.classList.toggle("is-longer", fortune.text.length > 46);
       wisdomSub.textContent = fortune.note;
       wisdomCount.textContent = wisdomReveals === 1 ? "1 wish" : `${wisdomReveals} wishes`;
       wisdomBall.classList.remove("is-shaking");
       wisdomBall.classList.add("is-lit");
-      wisdomBallText.textContent = "✦";
       wisdomBall.setAttribute("aria-busy", "false");
-      void wisdomCard.offsetWidth;
-      wisdomCard.classList.add("is-revealing");
+      void wisdomMessage.offsetWidth;
+      wisdomMessage.classList.add("is-revealing");
       wisdomHint.textContent = "Tap again for another little lift.";
-
-      wisdomGlowTimer = window.setTimeout(() => {
-        wisdomBall.classList.remove("is-lit");
-        wisdomBallText.textContent = "8";
-      }, 1400);
     }, prefersReducedMotion ? 160 : 900);
   }
 
@@ -533,14 +525,13 @@
   if (wisdomReset) {
     wisdomReset.addEventListener("click", () => {
       clearTimeout(wisdomTimer);
-      clearTimeout(wisdomGlowTimer);
       wisdomReveals = 0;
       wisdomLast = -1;
-      wisdomBall.classList.remove("is-shaking", "is-lit");
+      wisdomBall.classList.remove("is-shaking", "is-lit", "has-answer");
       wisdomBallText.textContent = "8";
       wisdomBall.setAttribute("aria-busy", "false");
-      wisdomCard.classList.remove("is-revealing");
-      wisdomMessage.textContent = "Your happy thought is waiting inside the ball.";
+      wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
+      wisdomMessage.textContent = "Tap to ask";
       wisdomSub.textContent = "Tap the 8 ball to begin.";
       wisdomHint.textContent = "Tap the ball to shake out a little wisdom.";
       wisdomCount.textContent = "";

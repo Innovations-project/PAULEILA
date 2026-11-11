@@ -1781,6 +1781,358 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
   .wisdom-card { min-height: 0; }
 }
 
+/* ---------- Magic 8 Ball (3D) ---------- */
+
+.oracle-layout {
+  display: grid;
+  place-items: center;
+  padding: clamp(6px, 1.6vw, 16px) 0;
+}
+
+.oracle-stage {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: min(100%, 660px);
+  padding: clamp(20px, 3vw, 34px) clamp(16px, 3vw, 28px);
+  border-radius: 32px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(560px 340px at 50% 26%, rgba(168, 85, 247, 0.16), transparent 70%),
+    linear-gradient(160deg, rgba(22, 11, 40, 0.94), rgba(7, 3, 14, 0.97));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.oracle-scene {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(430px, 78vw);
+  aspect-ratio: 1;
+  perspective: 900px;
+}
+
+.oracle-floor {
+  position: absolute;
+  left: 50%;
+  bottom: 1%;
+  width: 74%;
+  height: 17%;
+  transform: translateX(-50%) rotateX(70deg);
+  transform-origin: center;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.35) 46%, transparent 72%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.oracle-aura {
+  position: absolute;
+  inset: 1%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.26), transparent 64%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.oracle-ball {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  border: 1px solid rgba(216, 180, 254, 0.22);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.22), transparent 24%),
+    radial-gradient(circle at 68% 78%, rgba(88, 28, 135, 0.4), transparent 55%),
+    radial-gradient(circle at 45% 38%, #2a1740 0%, #120a1f 55%, #040108 100%);
+  box-shadow:
+    inset -28px -30px 55px rgba(0, 0, 0, 0.82),
+    inset 14px 16px 34px rgba(192, 132, 252, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 38px 70px -26px rgba(0, 0, 0, 0.9),
+    0 0 70px -14px rgba(124, 58, 237, 0.6);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform: rotateX(8deg) rotateY(-10deg);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.oracle-ball::before {
+  content: "";
+  position: absolute;
+  inset: 2.2%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 42px rgba(0, 0, 0, 0.65);
+  transform: translateZ(1px);
+  pointer-events: none;
+}
+
+.oracle-ball::after {
+  content: "";
+  position: absolute;
+  left: 15%;
+  bottom: 10%;
+  width: 38%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192, 132, 252, 0.32), transparent 70%);
+  filter: blur(16px);
+  transform: translateZ(2px);
+  pointer-events: none;
+}
+
+.oracle-ball:hover {
+  transform: rotateX(4deg) rotateY(4deg) translateY(-4px) scale(1.012);
+}
+
+.oracle-ball:focus-visible {
+  outline: 2px solid var(--violet-light);
+  outline-offset: 8px;
+}
+
+.oracle-ball.is-lit {
+  box-shadow:
+    inset -28px -30px 55px rgba(0, 0, 0, 0.82),
+    inset 14px 16px 34px rgba(192, 132, 252, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 42px 78px -26px rgba(0, 0, 0, 0.95),
+    0 0 100px -10px rgba(168, 85, 247, 0.8);
+}
+
+.oracle-rim {
+  position: absolute;
+  inset: -1.5%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 42px rgba(0, 0, 0, 0.75), 0 0 40px rgba(0, 0, 0, 0.65);
+  transform: translateZ(-16px);
+  pointer-events: none;
+}
+
+.oracle-gloss {
+  position: absolute;
+  top: 8%;
+  left: 14%;
+  width: 36%;
+  height: 23%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent);
+  filter: blur(10px);
+  transform: rotate(-26deg) translateZ(4px);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.oracle-window {
+  position: absolute;
+  left: 50%;
+  bottom: 16%;
+  width: 62%;
+  aspect-ratio: 1.08;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #06122a, #0b2f6b 45%, #071831);
+  box-shadow:
+    inset 0 12px 24px rgba(0, 0, 0, 0.78),
+    inset 0 -4px 12px rgba(96, 165, 250, 0.2),
+    0 0 0 7px rgba(0, 0, 0, 0.5),
+    0 0 0 8px rgba(255, 255, 255, 0.06),
+    0 18px 30px -12px rgba(0, 0, 0, 0.85);
+  transform: translateX(-50%) translateZ(22px);
+}
+
+.oracle-window::after {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border-radius: 50%;
+  border: 1px solid rgba(147, 197, 253, 0.12);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.oracle-liquid {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 38% 28%, rgba(147, 197, 253, 0.25), transparent 40%),
+    radial-gradient(circle at 65% 72%, rgba(37, 99, 235, 0.2), transparent 55%);
+  opacity: 0.9;
+}
+
+.oracle-triangle {
+  position: absolute;
+  top: 17%;
+  width: 52%;
+  aspect-ratio: 1;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.38), rgba(37, 99, 235, 0.08));
+  filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.25));
+  transition: opacity 0.45s ease;
+}
+
+.oracle-ball.has-answer .oracle-triangle { opacity: 0.18; }
+
+.oracle-face {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  gap: 5px;
+  padding: 10% 9%;
+  text-align: center;
+}
+
+.oracle-eight {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 8vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 0 16px rgba(147, 197, 253, 0.85), 0 2px 2px rgba(0, 0, 0, 0.6);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.oracle-ball.has-answer .oracle-eight {
+  position: absolute;
+  opacity: 0;
+  transform: scale(0.55);
+}
+
+.oracle-message {
+  max-width: 14ch;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 2.2vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: #ffffff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.oracle-ball.has-answer .oracle-message {
+  opacity: 1;
+  transform: none;
+}
+
+.oracle-message.is-long {
+  max-width: 15ch;
+  font-size: clamp(0.82rem, 1.9vw, 0.98rem);
+}
+
+.oracle-message.is-longer {
+  max-width: 16ch;
+  font-size: clamp(0.74rem, 1.7vw, 0.9rem);
+}
+
+.oracle-message.is-revealing {
+  animation: oracleReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.oracle-spark {
+  position: absolute;
+  font-size: 1rem;
+  color: var(--gold);
+  opacity: 0;
+  text-shadow: 0 0 12px rgba(253, 230, 138, 0.85);
+  pointer-events: none;
+}
+
+.oracle-spark.spark-a { top: 7%; right: 17%; }
+.oracle-spark.spark-b { bottom: 15%; left: 12%; font-size: 1.35rem; color: #f0abfc; }
+.oracle-spark.spark-c { top: 33%; left: 8%; font-size: 0.8rem; }
+
+.oracle-ball.is-shaking {
+  animation: oracleShake3D 0.86s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.oracle-ball.is-shaking .oracle-window {
+  animation: oracleWindowPulse 0.86s ease both;
+}
+
+.oracle-ball.is-shaking .oracle-spark {
+  animation: oracleSpark 0.95s ease both;
+}
+
+.oracle-ball.is-shaking .spark-b { animation-delay: 0.1s; }
+.oracle-ball.is-shaking .spark-c { animation-delay: 0.2s; }
+
+@keyframes oracleShake3D {
+  0%, 100% { transform: rotateX(8deg) rotateY(-10deg) translate3d(0, 0, 0) rotateZ(0); }
+  12% { transform: rotateX(18deg) rotateY(-22deg) translate3d(-7px, 2px, 14px) rotateZ(-4deg); }
+  24% { transform: rotateX(-4deg) rotateY(16deg) translate3d(8px, -3px, 16px) rotateZ(4deg); }
+  38% { transform: rotateX(16deg) rotateY(-14deg) translate3d(-6px, 1px, 12px) rotateZ(-3deg); }
+  52% { transform: rotateX(2deg) rotateY(20deg) translate3d(7px, -1px, 18px) rotateZ(3deg); }
+  68% { transform: rotateX(12deg) rotateY(-6deg) translate3d(-4px, 0, 10px) rotateZ(-2deg); }
+  84% { transform: rotateX(6deg) rotateY(2deg) translate3d(2px, 0, 4px) rotateZ(1deg); }
+}
+
+@keyframes oracleWindowPulse {
+  0%, 100% { transform: translateX(-50%) translateZ(22px) scale(1); }
+  45% { transform: translateX(-50%) translateZ(26px) scale(0.9); }
+  70% { transform: translateX(-50%) translateZ(24px) scale(1.04); }
+}
+
+@keyframes oracleSpark {
+  0% { opacity: 0; transform: translateY(6px) scale(0.4); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20px) scale(1.25); }
+}
+
+@keyframes oracleReveal {
+  from { opacity: 0; transform: translateY(8px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+.oracle-hint {
+  min-height: 1.2em;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--muted-2);
+}
+
+.oracle-readout {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  max-width: 46ch;
+  text-align: center;
+}
+
+.oracle-count {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--violet-light);
+}
+
+.oracle-sub {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .oracle-stage { padding: 22px 14px 24px; border-radius: 24px; }
+  .oracle-scene { width: min(350px, 82vw); }
+  .oracle-window { width: 64%; bottom: 15%; }
+  .oracle-message { max-width: 13ch; }
+}
+
 /* ---------- Books ---------- */
 
 .chips {

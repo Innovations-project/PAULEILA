@@ -367,28 +367,33 @@
       </div>
     </div>
 
-    <div class="wisdom-layout">
-      <div class="wisdom-stage">
-        <button class="wisdom-ball" id="wisdom-ball" type="button" aria-label="Tap the magic 8 ball for a happy thought" aria-busy="false">
-          <span class="wisdom-halo" aria-hidden="true"></span>
-          <span class="wisdom-ball-shine" aria-hidden="true"></span>
-          <span class="wisdom-window" aria-hidden="true"><span class="wisdom-window-text" id="wisdom-ball-text">8</span></span>
-          <span class="wisdom-spark spark-a" aria-hidden="true">✦</span>
-          <span class="wisdom-spark spark-b" aria-hidden="true">✧</span>
-          <span class="wisdom-spark spark-c" aria-hidden="true">✦</span>
-        </button>
-        <p class="wisdom-hint" id="wisdom-hint" aria-live="polite">Tap the ball to shake out a little wisdom.</p>
-      </div>
-
-      <article class="wisdom-card" id="wisdom-card" aria-live="polite">
-        <div class="wisdom-card-head">
-          <span class="tag">✨ Your word of wisdom</span>
-          <span class="wisdom-count" id="wisdom-count"></span>
+    <div class="oracle-layout">
+      <div class="oracle-stage">
+        <div class="oracle-scene">
+          <span class="oracle-floor" aria-hidden="true"></span>
+          <span class="oracle-aura" aria-hidden="true"></span>
+          <button class="oracle-ball" id="wisdom-ball" type="button" aria-label="Tap the magic 8 ball for a happy thought" aria-busy="false">
+            <span class="oracle-rim" aria-hidden="true"></span>
+            <span class="oracle-gloss" aria-hidden="true"></span>
+            <span class="oracle-window">
+              <span class="oracle-liquid" aria-hidden="true"></span>
+              <span class="oracle-triangle" aria-hidden="true"></span>
+              <span class="oracle-face">
+                <span class="oracle-eight" id="wisdom-ball-text">8</span>
+                <span class="oracle-message" id="wisdom-message" aria-live="polite">Tap to ask</span>
+              </span>
+            </span>
+            <span class="oracle-spark spark-a" aria-hidden="true">✦</span>
+            <span class="oracle-spark spark-b" aria-hidden="true">✧</span>
+            <span class="oracle-spark spark-c" aria-hidden="true">✦</span>
+          </button>
         </div>
-        <p class="wisdom-message" id="wisdom-message">Your happy thought is waiting inside the ball.</p>
-        <p class="wisdom-sub" id="wisdom-sub">Tap the 8 ball to begin.</p>
-        <div class="wisdom-stars" aria-hidden="true">✦ ✧ ✦</div>
-      </article>
+        <p class="oracle-hint" id="wisdom-hint" aria-live="polite">Tap the ball to shake out a little wisdom.</p>
+        <div class="oracle-readout">
+          <span class="oracle-count" id="wisdom-count"></span>
+          <p class="oracle-sub" id="wisdom-sub">Tap the 8 ball to begin.</p>
+        </div>
+      </div>
     </div>
   </section>
 
