@@ -1146,13 +1146,16 @@
   const translateGrid = $("#translate-grid");
 
   const translateLangs = [
-    { code: "ja", name: "Japanese", flag: "🇯🇵", note: "日本語" },
-    { code: "ko", name: "Korean", flag: "🇰🇷", note: "한국어" },
-    { code: "zh", name: "Chinese", flag: "🇨🇳", note: "中文" },
-    { code: "it", name: "Italian", flag: "🇮🇹", note: "italiano" },
-    { code: "es", name: "Spanish", flag: "🇪🇸", note: "español" },
-    { code: "ar", name: "Arabic", flag: "🇸🇦", note: "العربية" }
+    { code: "ja", name: "Japanese", country: "Japan", flagUrl: "https://flagcdn.com/w80/jp.png", note: "日本語" },
+    { code: "ko", name: "Korean", country: "South Korea", flagUrl: "https://flagcdn.com/w80/kr.png", note: "한국어" },
+    { code: "zh", name: "Chinese", country: "China", flagUrl: "https://flagcdn.com/w80/cn.png", note: "中文" },
+    { code: "it", name: "Italian", country: "Italy", flagUrl: "https://flagcdn.com/w80/it.png", note: "italiano" },
+    { code: "es", name: "Spanish", country: "Spain", flagUrl: "https://flagcdn.com/w80/es.png", note: "español" },
+    { code: "ar", name: "Arabic", country: "Saudi Arabia", flagUrl: "https://flagcdn.com/w80/sa.png", note: "العربية" }
   ];
+
+  const flagMarkup = (lang) =>
+    `<img class="translate-flag" src="${lang.flagUrl}" alt="${lang.country} flag" width="28" height="20" loading="lazy" decoding="async" />`;
 
   const translateCache = new Map();
 
@@ -1168,7 +1171,7 @@
   function renderTranslateLoading() {
     translateGrid.innerHTML = translateLangs.map((lang) => `
       <article class="translate-card">
-        <div class="translate-card-head"><span class="translate-flag">${lang.flag}</span><h3>${lang.name}</h3></div>
+        <div class="translate-card-head">${flagMarkup(lang)}<h3>${lang.name}</h3></div>
         <p class="translate-text translate-loading">Translating…</p>
         <p class="translate-written"></p>
       </article>
@@ -1182,7 +1185,7 @@
       const written = item.written || "";
       return `
         <article class="translate-card">
-          <div class="translate-card-head"><span class="translate-flag">${lang.flag}</span><h3>${lang.name}</h3><span class="translate-native">${lang.note}</span></div>
+          <div class="translate-card-head">${flagMarkup(lang)}<h3>${lang.name}</h3><span class="translate-native">${lang.note}</span></div>
           <p class="translate-text">${esc(translation)}</p>
           <p class="translate-written"><span class="translate-written-label">How it’s written:</span> ${esc(written || "—")}</p>
         </article>

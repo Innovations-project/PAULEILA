@@ -2642,7 +2642,15 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
   color: #f9f4ff;
   margin: 0;
 }
-.translate-flag { font-size: 1.3rem; }
+.translate-flag {
+  display: block;
+  width: 28px;
+  height: 20px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
 .translate-native {
   margin-left: auto;
   font-size: 0.7rem;
