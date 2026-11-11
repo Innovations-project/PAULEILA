@@ -36,12 +36,6 @@
     return arr;
   };
 
-  const dayOfYear = () => {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    return Math.floor((now - start) / 86400000);
-  };
-
   /* ---------- Tabs ---------- */
 
   const tabs = $$(".tab");
@@ -376,10 +370,138 @@
       def: "A group of stars that forms a pattern in the sky.",
       example: "They found the constellation shaped like a hunter in the winter sky.",
       note: "The stars are far apart; humans drew the lines that make them a story."
+    },
+    {
+      word: "Gregarious",
+      phonetic: "/ɡrəˈɡer-ee-əs/ · adjective",
+      def: "Very sociable; someone who loves being around other people.",
+      example: "Her gregarious nature made every new class feel like a room full of friends.",
+      note: "Gregarious comes from the Latin grex, meaning flock. Think of a happy flock of birds."
+    },
+    {
+      word: "Meticulous",
+      phonetic: "/məˈtik-yə-ləs/ · adjective",
+      def: "Extremely careful about little details.",
+      example: "He was meticulous about his model rocket, checking every fin twice.",
+      note: "Meticulous is not the same as fussy. It means caring about getting it right."
+    },
+    {
+      word: "Vivacious",
+      phonetic: "/vī-ˈvā-shəs/ · adjective",
+      def: "Lively, energetic, and full of sparkle.",
+      example: "Her vivacious laugh made the whole picnic feel brighter.",
+      note: "Vivacious comes from vivere, 'to live.' It is life with the volume turned up."
+    },
+    {
+      word: "Nebula",
+      phonetic: "/ˈneb-yə-lə/ · noun",
+      def: "A huge cloud of gas and dust in space where stars are born.",
+      example: "The telescope showed a pink nebula glowing like a cosmic garden.",
+      note: "Nebula means 'cloud' in Latin. Some are cradles for baby stars."
+    },
+    {
+      word: "Quintessential",
+      phonetic: "/ˌkwin-tə-ˈsen-shəl/ · adjective",
+      def: "The most perfect example of something.",
+      example: "That tiny bookshop was the quintessential cozy corner.",
+      note: "It comes from the fifth element, once thought to be the pure essence of everything."
+    },
+    {
+      word: "Iridescent",
+      phonetic: "/ˌir-i-ˈdes-ənt/ · adjective",
+      def: "Showing shimmering colours that seem to change with the light.",
+      example: "The bubble floated by in iridescent shades of pink and green.",
+      note: "Iris was the Greek goddess of the rainbow, which is where the word begins."
+    },
+    {
+      word: "Altruistic",
+      phonetic: "/ˌal-troo-ˈis-tik/ · adjective",
+      def: "Caring about other people's happiness more than your own gain.",
+      example: "Her altruistic choice was to share the last cookie without being asked.",
+      note: "Altruistic acts can be small. Kindness does not need an audience."
+    },
+    {
+      word: "Zephyr",
+      phonetic: "/ˈzef-ər/ · noun",
+      def: "A soft, gentle breeze.",
+      example: "A warm zephyr ruffled the pages of her notebook.",
+      note: "Zephyrus was the Greek god of the west wind. Say it softly, like a breeze."
+    },
+    {
+      word: "Epiphany",
+      phonetic: "/i-ˈpif-ə-nē/ · noun",
+      def: "A sudden clear understanding or brilliant idea.",
+      example: "She had an epiphany in the bath: the answer was to build it upside down.",
+      note: "An epiphany can arrive with a splash. Keep a notebook nearby for yours."
+    },
+    {
+      word: "Mellifluous",
+      phonetic: "/mə-ˈlif-loo-əs/ · adjective",
+      def: "Sweet and smooth-sounding, like honey for the ears.",
+      example: "Her mellifluous voice made the bedtime story feel like a song.",
+      note: "Melli- means honey and fluere means to flow. Honey flowing — lovely."
+    },
+    {
+      word: "Intrepid",
+      phonetic: "/in-ˈtrep-əd/ · adjective",
+      def: "Brave and adventurous, especially when facing something new.",
+      example: "The intrepid explorer packed a map, a snack, and a very big hat.",
+      note: "Intrepid does not mean fearless. It means going anyway."
+    },
+    {
+      word: "Effervescent",
+      phonetic: "/ˌef-ər-ˈves-ənt/ · adjective",
+      def: "Bubbly, fizzy, and full of happy energy.",
+      example: "Her effervescent mood made even chores feel like a dance party.",
+      note: "Think of a fizzy drink: all those tiny bubbles are the effervescence."
+    },
+    {
+      word: "Sagacious",
+      phonetic: "/sə-ˈgā-shəs/ · adjective",
+      def: "Wise and quick to understand.",
+      example: "The sagacious old owl knew exactly which path led home.",
+      note: "Sagacious comes from sagax, Latin for keen-scented — like a mind that can sniff out truth."
+    },
+    {
+      word: "Marvel",
+      phonetic: "/ˈmär-vəl/ · noun or verb",
+      def: "A wonderful thing; to feel wonder or amazement.",
+      example: "She paused to marvel at the tiny world inside a drop of pond water.",
+      note: "Marvel is both a noun and a verb. Today, try to marvel at one ordinary thing."
+    },
+    {
+      word: "Symmetry",
+      phonetic: "/ˈsim-ə-trē/ · noun",
+      def: "A balanced arrangement where two sides match.",
+      example: "The snowflake's symmetry made it look like a tiny frozen star.",
+      note: "Symmetry is not just for art. It appears in shells, leaves, and even music."
+    },
+    {
+      word: "Aurora",
+      phonetic: "/ə-ˈrôr-ə/ · noun",
+      def: "The glowing lights in the sky near the poles; also dawn.",
+      example: "The aurora shimmered above the snow in ribbons of green and violet.",
+      note: "Aurora was the Roman goddess of dawn. The northern lights borrowed her name."
+    },
+    {
+      word: "Camaraderie",
+      phonetic: "/ˌkäm-əˈräd-ə-rē/ · noun",
+      def: "A feeling of friendship and trust among people who share something.",
+      example: "The team's camaraderie made every practice feel like a party.",
+      note: "Camaraderie grows when people cheer for each other, not just for themselves."
+    },
+    {
+      word: "Kismet",
+      phonetic: "/ˈkiz-met/ · noun",
+      def: "Destiny; the feeling that something was meant to happen.",
+      example: "Finding her lost bracelet on the beach felt like kismet.",
+      note: "Kismet comes from Turkish. It is a fancy word for a happy coincidence."
     }
   ];
 
-  let wordIndex = dayOfYear() % words.length;
+  let wordIndex = 0;
+  let wordDateKey = "";
+  let wordRefreshTimer = null;
 
   const wordDate = $("#word-date");
   const wordWord = $("#word-word");
@@ -400,7 +522,44 @@
     wordDate.textContent = new Date().toLocaleDateString(undefined, { month: "long", day: "numeric" });
   }
 
-  renderWord();
+  function refreshDailyWord(force = false) {
+    const today = localDateKey();
+    if (!force && today === wordDateKey) return;
+    wordDateKey = today;
+    let index = hashDate(today) % words.length;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const previousIndex = hashDate(localDateKey(yesterday)) % words.length;
+    if (index === previousIndex) index = (index + 1) % words.length;
+    wordIndex = index;
+    renderWord();
+  }
+
+  function scheduleWordRefresh() {
+    clearTimeout(wordRefreshTimer);
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2, 0);
+    wordRefreshTimer = window.setTimeout(() => {
+      refreshDailyWord(true);
+      scheduleWordRefresh();
+    }, Math.max(1000, nextMidnight - now));
+  }
+
+  function refreshWordIfDayChanged() {
+    if (localDateKey() !== wordDateKey) {
+      refreshDailyWord(true);
+      scheduleWordRefresh();
+    }
+  }
+
+  refreshDailyWord(true);
+  scheduleWordRefresh();
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshWordIfDayChanged();
+  });
+  window.addEventListener("focus", refreshWordIfDayChanged);
+  window.addEventListener("pageshow", refreshWordIfDayChanged);
 
   $("#word-next").addEventListener("click", () => {
     wordIndex = (wordIndex + 1) % words.length;
