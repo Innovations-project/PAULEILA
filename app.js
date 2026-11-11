@@ -483,17 +483,33 @@
   let wisdomReveals = 0;
   let wisdomTimer = null;
 
+  function renderWisdomMessage(text) {
+    let letterIndex = 0;
+    const words = text.split(" ").map((word) => {
+      const letters = Array.from(word).map((char) => {
+        const span = `<span class="oracle-letter" style="--i:${letterIndex}">${char}</span>`;
+        letterIndex += 1;
+        return span;
+      }).join("");
+      letterIndex += 1;
+      return `<span class="oracle-word">${letters}</span>`;
+    }).join(" ");
+    wisdomMessage.innerHTML = `<span aria-hidden="true">${words}</span>`;
+    wisdomMessage.setAttribute("aria-label", text);
+  }
+
   function revealWisdom() {
-    if (!wisdomBall || wisdomBall.classList.contains("is-shaking")) return;
+    if (!wisdomBall || wisdomBall.classList.contains("is-shaking") || wisdomBall.classList.contains("is-thinking")) return;
 
     clearTimeout(wisdomTimer);
-    wisdomBall.classList.remove("is-lit");
-    wisdomBall.classList.add("is-shaking", "has-answer");
+    wisdomBall.classList.remove("is-lit", "has-answer");
+    wisdomBall.classList.add("is-shaking", "is-thinking");
     wisdomBall.setAttribute("aria-busy", "true");
     wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
-    wisdomHint.textContent = "Shaking the ball…";
+    wisdomMessage.removeAttribute("aria-label");
+    wisdomHint.textContent = "The triangle is turning…";
     wisdomMessage.textContent = "…";
-    wisdomSub.textContent = "Listening for a little light.";
+    wisdomSub.textContent = "Give the orb five seconds to think.";
 
     wisdomTimer = window.setTimeout(() => {
       let index = Math.floor(Math.random() * wisdomFortunes.length);
@@ -504,18 +520,18 @@
       const fortune = wisdomFortunes[index];
 
       wisdomReveals += 1;
-      wisdomMessage.textContent = fortune.text;
+      renderWisdomMessage(fortune.text);
       wisdomMessage.classList.toggle("is-long", fortune.text.length > 32);
       wisdomMessage.classList.toggle("is-longer", fortune.text.length > 46);
       wisdomSub.textContent = fortune.note;
       wisdomCount.textContent = wisdomReveals === 1 ? "1 wish" : `${wisdomReveals} wishes`;
-      wisdomBall.classList.remove("is-shaking");
-      wisdomBall.classList.add("is-lit");
+      wisdomBall.classList.remove("is-shaking", "is-thinking");
+      wisdomBall.classList.add("is-lit", "has-answer");
       wisdomBall.setAttribute("aria-busy", "false");
       void wisdomMessage.offsetWidth;
       wisdomMessage.classList.add("is-revealing");
       wisdomHint.textContent = "Tap again for another little lift.";
-    }, prefersReducedMotion ? 160 : 900);
+    }, prefersReducedMotion ? 300 : 5000);
   }
 
   if (wisdomBall) {
@@ -527,10 +543,11 @@
       clearTimeout(wisdomTimer);
       wisdomReveals = 0;
       wisdomLast = -1;
-      wisdomBall.classList.remove("is-shaking", "is-lit", "has-answer");
+      wisdomBall.classList.remove("is-shaking", "is-thinking", "is-lit", "has-answer");
       wisdomBallText.textContent = "8";
       wisdomBall.setAttribute("aria-busy", "false");
       wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
+      wisdomMessage.removeAttribute("aria-label");
       wisdomMessage.textContent = "Tap to ask";
       wisdomSub.textContent = "Tap the 8 ball to begin.";
       wisdomHint.textContent = "Tap the ball to shake out a little wisdom.";
