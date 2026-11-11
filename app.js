@@ -424,7 +424,8 @@
     `;
   }
 
-  grades.forEach((entry, index) => {
+  if (gradePicker && gradeDetail) {
+    grades.forEach((entry, index) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "grade-btn";
@@ -438,7 +439,115 @@
     gradePicker.appendChild(button);
   });
 
-  renderGrade(0);  /* ---------- Books ---------- */
+    renderGrade(0);
+  }
+
+  /* ---------- Words of Wisdom ---------- */
+
+  const wisdomBall = $("#wisdom-ball");
+  const wisdomBallText = $("#wisdom-ball-text");
+  const wisdomMessage = $("#wisdom-message");
+  const wisdomSub = $("#wisdom-sub");
+  const wisdomHint = $("#wisdom-hint");
+  const wisdomCard = $("#wisdom-card");
+  const wisdomCount = $("#wisdom-count");
+  const wisdomReset = $("#wisdom-reset");
+
+  const wisdomFortunes = [
+    { text: "You are enough.", note: "Exactly as you are, right now." },
+    { text: "Small steps are still steps.", note: "Keep going, lovely." },
+    { text: "Your kindness is magic.", note: "The world feels it." },
+    { text: "Brave looks good on you.", note: "Do the thing anyway." },
+    { text: "You make the world softer.", note: "That is a rare gift." },
+    { text: "Curiosity is your superpower.", note: "Ask the next question." },
+    { text: "You are allowed to shine.", note: "No shrinking today." },
+    { text: "Today is yours.", note: "Take it one small joy at a time." },
+    { text: "You’ve got this.", note: "Even on the wobbly days." },
+    { text: "Your smile is a little sunrise.", note: "Someone needed it today." },
+    { text: "Be proud of your progress.", note: "You came a long way." },
+    { text: "A gentle heart is a strong heart.", note: "Softness is courage too." },
+    { text: "You are wonderfully made.", note: "Every little detail." },
+    { text: "Good things are growing.", note: "Even when you cannot see them yet." },
+    { text: "Take up space.", note: "Your voice belongs here." },
+    { text: "Your voice matters.", note: "Say the true thing." },
+    { text: "Rest is part of the plan.", note: "You do not have to earn it." },
+    { text: "You are loved, exactly as you are.", note: "No edits needed." },
+    { text: "The world needs your sparkle.", note: "Shine in your own way." },
+    { text: "You are doing better than you think.", note: "Be kind to yourself." },
+    { text: "Choose wonder.", note: "There is magic in noticing." },
+    { text: "You can do hard things.", note: "One brave minute at a time." },
+    { text: "Your light is not too much.", note: "Let it glow." },
+    { text: "You belong here.", note: "This little universe is yours." }
+  ];
+
+  let wisdomLast = -1;
+  let wisdomReveals = 0;
+  let wisdomTimer = null;
+  let wisdomGlowTimer = null;
+
+  function revealWisdom() {
+    if (!wisdomBall || wisdomBall.classList.contains("is-shaking")) return;
+
+    clearTimeout(wisdomTimer);
+    clearTimeout(wisdomGlowTimer);
+    wisdomBall.classList.remove("is-lit");
+    wisdomBallText.textContent = "8";
+    wisdomCard.classList.remove("is-revealing");
+    wisdomBall.classList.add("is-shaking");
+    wisdomBall.setAttribute("aria-busy", "true");
+    wisdomHint.textContent = "Shaking the ball…";
+    wisdomMessage.textContent = "…";
+    wisdomSub.textContent = "Listening for a little light.";
+
+    wisdomTimer = window.setTimeout(() => {
+      let index = Math.floor(Math.random() * wisdomFortunes.length);
+      if (wisdomFortunes.length > 1 && index === wisdomLast) {
+        index = (index + 1) % wisdomFortunes.length;
+      }
+      wisdomLast = index;
+      const fortune = wisdomFortunes[index];
+
+      wisdomReveals += 1;
+      wisdomMessage.textContent = fortune.text;
+      wisdomSub.textContent = fortune.note;
+      wisdomCount.textContent = wisdomReveals === 1 ? "1 wish" : `${wisdomReveals} wishes`;
+      wisdomBall.classList.remove("is-shaking");
+      wisdomBall.classList.add("is-lit");
+      wisdomBallText.textContent = "✦";
+      wisdomBall.setAttribute("aria-busy", "false");
+      void wisdomCard.offsetWidth;
+      wisdomCard.classList.add("is-revealing");
+      wisdomHint.textContent = "Tap again for another little lift.";
+
+      wisdomGlowTimer = window.setTimeout(() => {
+        wisdomBall.classList.remove("is-lit");
+        wisdomBallText.textContent = "8";
+      }, 1400);
+    }, prefersReducedMotion ? 160 : 900);
+  }
+
+  if (wisdomBall) {
+    wisdomBall.addEventListener("click", revealWisdom);
+  }
+
+  if (wisdomReset) {
+    wisdomReset.addEventListener("click", () => {
+      clearTimeout(wisdomTimer);
+      clearTimeout(wisdomGlowTimer);
+      wisdomReveals = 0;
+      wisdomLast = -1;
+      wisdomBall.classList.remove("is-shaking", "is-lit");
+      wisdomBallText.textContent = "8";
+      wisdomBall.setAttribute("aria-busy", "false");
+      wisdomCard.classList.remove("is-revealing");
+      wisdomMessage.textContent = "Your happy thought is waiting inside the ball.";
+      wisdomSub.textContent = "Tap the 8 ball to begin.";
+      wisdomHint.textContent = "Tap the ball to shake out a little wisdom.";
+      wisdomCount.textContent = "";
+    });
+  }
+
+  /* ---------- Books ---------- */
 
   const genres = [
     { id: "all", label: "All genres", emoji: "✦" },

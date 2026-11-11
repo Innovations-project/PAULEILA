@@ -1476,6 +1476,311 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
 .genius-tip p { font-size: 0.88rem; line-height: 1.6; color: var(--lilac); }
 .genius-tip strong { color: #fff; }
 
+/* ---------- Words of Wisdom ---------- */
+
+.wisdom-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.85fr) minmax(0, 1.15fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.wisdom-stage {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 18px;
+  padding: clamp(22px, 3vw, 36px) 18px;
+  border-radius: 28px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(430px 260px at 50% 40%, rgba(168, 85, 247, 0.18), transparent 70%),
+    linear-gradient(160deg, rgba(26, 13, 47, 0.92), rgba(9, 4, 18, 0.96));
+  box-shadow: var(--shadow);
+}
+
+.wisdom-ball {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(244px, 58vw);
+  aspect-ratio: 1;
+  isolation: isolate;
+  border-radius: 50%;
+  border: 1px solid rgba(216, 180, 254, 0.24);
+  background:
+    radial-gradient(circle at 34% 24%, rgba(255, 255, 255, 0.18), transparent 28%),
+    radial-gradient(circle at 70% 74%, rgba(88, 28, 135, 0.34), transparent 52%),
+    radial-gradient(circle at 50% 45%, #2a1740 0%, #120a1f 52%, #05020a 100%);
+  box-shadow:
+    inset -22px -24px 48px rgba(0, 0, 0, 0.75),
+    inset 10px 12px 28px rgba(192, 132, 252, 0.16),
+    0 34px 70px -30px rgba(0, 0, 0, 0.9),
+    0 0 60px -12px rgba(124, 58, 237, 0.55);
+  padding: 0;
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wisdom-ball::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.wisdom-ball::after {
+  content: "";
+  position: absolute;
+  left: 19%;
+  bottom: 11%;
+  width: 34%;
+  height: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192, 132, 252, 0.35), transparent 68%);
+  filter: blur(16px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.wisdom-ball:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow:
+    inset -22px -24px 48px rgba(0, 0, 0, 0.75),
+    inset 10px 12px 28px rgba(192, 132, 252, 0.2),
+    0 38px 76px -30px rgba(0, 0, 0, 0.95),
+    0 0 76px -10px rgba(124, 58, 237, 0.72);
+}
+
+.wisdom-ball:focus-visible {
+  outline: 2px solid var(--violet-light);
+  outline-offset: 6px;
+}
+
+.wisdom-halo {
+  position: absolute;
+  inset: -18%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.24), transparent 62%);
+  filter: blur(12px);
+  opacity: 0.8;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+.wisdom-ball:hover .wisdom-halo,
+.wisdom-ball.is-shaking .wisdom-halo {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+.wisdom-ball-shine {
+  position: absolute;
+  top: 9%;
+  left: 16%;
+  width: 34%;
+  height: 22%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.48), transparent);
+  filter: blur(10px);
+  transform: rotate(-24deg);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.wisdom-window {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 30%, #ffffff, #f3e8ff 42%, #d8b4fe 78%, #a855f7);
+  box-shadow:
+    inset 0 0 18px rgba(88, 28, 135, 0.28),
+    0 0 0 5px rgba(255, 255, 255, 0.08),
+    0 0 30px rgba(216, 180, 254, 0.35);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+
+.wisdom-window::after {
+  content: "";
+  position: absolute;
+  inset: 13%;
+  border-radius: 50%;
+  border: 1px solid rgba(88, 28, 135, 0.18);
+}
+
+.wisdom-window-text {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1;
+  color: #2e1065;
+  transform: translateY(-2px);
+}
+
+.wisdom-ball.is-lit .wisdom-window {
+  background: radial-gradient(circle at 40% 30%, #ffffff, #fdf2ff 38%, #f0abfc 74%, #c084fc);
+  box-shadow:
+    inset 0 0 22px rgba(88, 28, 135, 0.22),
+    0 0 0 5px rgba(255, 255, 255, 0.12),
+    0 0 46px rgba(240, 171, 252, 0.65);
+  transform: scale(1.06);
+}
+
+.wisdom-spark {
+  position: absolute;
+  font-size: 1.05rem;
+  color: var(--gold);
+  opacity: 0;
+  text-shadow: 0 0 12px rgba(253, 230, 138, 0.85);
+  pointer-events: none;
+}
+.spark-a { top: 8%; right: 16%; }
+.spark-b { left: 11%; bottom: 14%; font-size: 1.35rem; color: #f0abfc; }
+.spark-c { top: 34%; left: 8%; font-size: 0.8rem; }
+
+.wisdom-ball.is-shaking {
+  animation: wisdomShake 0.78s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+.wisdom-ball.is-shaking .wisdom-window {
+  animation: wisdomWindowPulse 0.78s ease both;
+}
+.wisdom-ball.is-shaking .wisdom-spark {
+  animation: wisdomSpark 0.95s ease both;
+}
+.wisdom-ball.is-shaking .spark-b { animation-delay: 0.1s; }
+.wisdom-ball.is-shaking .spark-c { animation-delay: 0.2s; }
+
+@keyframes wisdomShake {
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  15% { transform: translate(-7px, 2px) rotate(-4deg); }
+  30% { transform: translate(7px, -2px) rotate(4deg); }
+  45% { transform: translate(-5px, 1px) rotate(-3deg); }
+  60% { transform: translate(5px, -1px) rotate(3deg); }
+  75% { transform: translate(-2px, 0) rotate(-1.5deg); }
+}
+
+@keyframes wisdomWindowPulse {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(0.86); }
+  70% { transform: scale(1.08); }
+}
+
+@keyframes wisdomSpark {
+  0% { opacity: 0; transform: translateY(6px) scale(0.4); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-20px) scale(1.25); }
+}
+
+@keyframes wisdomReveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wisdom-hint {
+  min-height: 1.2em;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--muted-2);
+}
+
+.wisdom-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-height: 240px;
+  overflow: hidden;
+  padding: clamp(24px, 3.5vw, 38px);
+  border-radius: 28px;
+  border: 1px solid rgba(192, 132, 252, 0.28);
+  background:
+    radial-gradient(560px 300px at 100% 0%, rgba(168, 85, 247, 0.22), transparent 66%),
+    radial-gradient(360px 240px at 0% 100%, rgba(240, 171, 252, 0.1), transparent 62%),
+    linear-gradient(155deg, rgba(34, 16, 60, 0.96), rgba(9, 4, 18, 0.97));
+  box-shadow: var(--shadow);
+}
+
+.wisdom-card::before {
+  content: "✧";
+  position: absolute;
+  top: -40px;
+  right: 18px;
+  font-family: var(--font-display);
+  font-size: 12rem;
+  line-height: 1;
+  color: rgba(216, 180, 254, 0.05);
+  pointer-events: none;
+}
+
+.wisdom-card > * { position: relative; }
+
+.wisdom-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.wisdom-count {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+.wisdom-message {
+  min-height: 2.6em;
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.65rem, 3.4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #fbf6ff;
+  text-wrap: balance;
+}
+
+.wisdom-sub {
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.wisdom-stars {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.5em;
+  color: rgba(216, 180, 254, 0.55);
+}
+
+.wisdom-card.is-revealing .wisdom-message {
+  animation: wisdomReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.wisdom-card.is-revealing .wisdom-sub {
+  animation: wisdomReveal 0.55s 0.08s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (max-width: 760px) {
+  .wisdom-layout { grid-template-columns: 1fr; }
+  .wisdom-stage { padding: 24px 16px 20px; }
+  .wisdom-ball { width: min(210px, 62vw); }
+  .wisdom-card { min-height: 0; }
+}
+
 /* ---------- Books ---------- */
 
 .chips {
