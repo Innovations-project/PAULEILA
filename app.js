@@ -114,12 +114,109 @@
     { setup: "Why did the book join the library club?", punch: "It wanted to get its story straight." },
     { setup: "How do you make a tissue dance?", punch: "Put a little boogie in it." },
     { setup: "What did one wall say to the other wall?", punch: "I'll meet you at the corner." },
-    { setup: "Why do bees have sticky hair?", punch: "Because they use honeycombs." }
+    { setup: "Why do bees have sticky hair?", punch: "Because they use honeycombs." },
+    { setup: "Why did the scarecrow win an award?", punch: "Because he was outstanding in his field." },
+    { setup: "What do you call a fake noodle?", punch: "An impasta." },
+    { setup: "Why did the bicycle fall over?", punch: "It was two-tired." },
+    { setup: "How does a penguin build its house?", punch: "Igloos it together." },
+    { setup: "Why can't your nose be 12 inches long?", punch: "Because then it would be a foot." },
+    { setup: "What do you call cheese that isn't yours?", punch: "Nacho cheese." },
+    { setup: "Why did the golfer bring two pairs of pants?", punch: "In case he got a hole in one." },
+    { setup: "What do you call a sleeping bull?", punch: "A bulldozer." },
+    { setup: "Why did the tomato turn red?", punch: "It saw the salad dressing." },
+    { setup: "What do you call a snowman with a six-pack?", punch: "An abdominal snowman." },
+    { setup: "Why did the cookie go to the doctor?", punch: "It felt crummy." },
+    { setup: "What do you call a boomerang that won't come back?", punch: "A stick." },
+    { setup: "Why did the coffee file a police report?", punch: "It got mugged." },
+    { setup: "What did the ocean say to the beach?", punch: "Nothing, it just waved." },
+    { setup: "Why are fish so smart?", punch: "They live in schools." },
+    { setup: "What do you call a bear with no ears?", punch: "B." },
+    { setup: "Why did the banana go to the doctor?", punch: "It wasn't peeling well." },
+    { setup: "What do you call a dinosaur that crashes its car?", punch: "Tyrannosaurus wrecks." },
+    { setup: "Why did the girl sit on the clock?", punch: "She wanted to be on time." },
+    { setup: "What do you call a pony with a sore throat?", punch: "A little horse." },
+    { setup: "What do you call a magician's dog?", punch: "A labracadabrador." },
+    { setup: "Why did the math teacher open a window?", punch: "To let the problems fly out." },
+    { setup: "What do you call a group of musical frogs?", punch: "A croakestra." },
+    { setup: "Why did the smartphone go to school?", punch: "It wanted to improve its apps." },
+    { setup: "What do you call a robot who takes the long way home?", punch: "R2-detour." },
+    { setup: "Why did the leaf go to the doctor?", punch: "It was feeling green." },
+    { setup: "What do you call a cat that loves bowling?", punch: "An alley cat." },
+    { setup: "Why did the picture go to jail?", punch: "It was framed." },
+    { setup: "What do you call a sleeping dinosaur?", punch: "A dino-snore." },
+    { setup: "Why did the donut go to the dentist?", punch: "It needed a filling." },
+    { setup: "What do you call a cow with no legs?", punch: "Ground beef." },
+    { setup: "Why did the chicken join a band?", punch: "Because it had the drumsticks." },
+    { setup: "What do you call a fish with no eyes?", punch: "A fsh." }
   ];
 
   const featureHost = $("#joke-feature");
   const jokeGrid = $("#joke-grid");
-  let featureIndex = dayOfYear() % jokes.length;
+  const JOKES_PER_DAY = 17;
+  let dailyJokes = [];
+  let featureIndex = 0;
+  let jokeDateKey = "";
+  let jokeRefreshTimer = null;
+
+  const localDateKey = (date = new Date()) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  function hashDate(value) {
+    let hash = 2166136261;
+    for (let i = 0; i < value.length; i += 1) {
+      hash ^= value.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  function seededShuffle(list, seed) {
+    const arr = list.slice();
+    let state = seed >>> 0;
+    const random = () => {
+      state += 0x6D2B79F5;
+      let t = state;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function refreshDailyJokes(force = false) {
+    const today = localDateKey();
+    if (!force && today === jokeDateKey && dailyJokes.length) return;
+    jokeDateKey = today;
+    dailyJokes = seededShuffle(jokes, hashDate(today)).slice(0, JOKES_PER_DAY);
+    featureIndex = 0;
+    renderFeatureJoke();
+    renderJokeGrid();
+  }
+
+  function scheduleJokeRefresh() {
+    clearTimeout(jokeRefreshTimer);
+    const now = new Date();
+    const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2, 0);
+    jokeRefreshTimer = window.setTimeout(() => {
+      refreshDailyJokes(true);
+      scheduleJokeRefresh();
+    }, Math.max(1000, nextMidnight - now));
+  }
+
+  function refreshJokesIfDayChanged() {
+    if (localDateKey() !== jokeDateKey) {
+      refreshDailyJokes(true);
+      scheduleJokeRefresh();
+    }
+  }
 
   function jokeCard(joke, index) {
     const card = document.createElement("article");
@@ -142,7 +239,8 @@
   }
 
   function renderFeatureJoke() {
-    const joke = jokes[featureIndex];
+    if (!dailyJokes.length) return;
+    const joke = dailyJokes[featureIndex];
     featureHost.innerHTML = `
       <article class="joke-feature-card">
         <span class="feature-emoji" aria-hidden="true">😂</span>
@@ -169,17 +267,24 @@
 
   function renderJokeGrid() {
     jokeGrid.innerHTML = "";
-    jokes.forEach((joke, index) => {
+    dailyJokes.forEach((joke, index) => {
       if (index !== featureIndex) jokeGrid.appendChild(jokeCard(joke, index));
     });
   }
 
-  renderFeatureJoke();
-  renderJokeGrid();
+  refreshDailyJokes(true);
+  scheduleJokeRefresh();
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshJokesIfDayChanged();
+  });
+  window.addEventListener("focus", refreshJokesIfDayChanged);
+  window.addEventListener("pageshow", refreshJokesIfDayChanged);
 
   $("#joke-shuffle").addEventListener("click", () => {
-    let next = Math.floor(Math.random() * jokes.length);
-    if (next === featureIndex) next = (next + 1) % jokes.length;
+    if (!dailyJokes.length) return;
+    let next = Math.floor(Math.random() * dailyJokes.length);
+    if (next === featureIndex) next = (next + 1) % dailyJokes.length;
     featureIndex = next;
     renderFeatureJoke();
     renderJokeGrid();
