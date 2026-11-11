@@ -775,6 +775,15 @@
 
   const translateCache = new Map();
 
+  function isCompleteTranslation(entry) {
+    if (!entry) return false;
+    return translateLangs.every((lang) => {
+      const item = entry[lang.code];
+      const translation = item && item.translation;
+      return typeof translation === "string" && translation.trim() && translation.trim() !== "—";
+    });
+  }
+
   function renderTranslateLoading() {
     translateGrid.innerHTML = translateLangs.map((lang) => `
       <article class="translate-card">
@@ -807,7 +816,7 @@
       return;
     }
     const cached = translateCache.get(text);
-    if (cached) {
+    if (cached && isCompleteTranslation(cached)) {
       renderTranslateResult(cached);
       translateStatus.textContent = "Translated (cached).";
       return;
@@ -816,21 +825,24 @@
       const stored = localStorage.getItem("pauleila:translate:" + text);
       if (stored) {
         const parsed = JSON.parse(stored);
-        translateCache.set(text, parsed);
-        renderTranslateResult(parsed);
-        translateStatus.textContent = "Translated (cached).";
-        return;
+        if (isCompleteTranslation(parsed)) {
+          translateCache.set(text, parsed);
+          renderTranslateResult(parsed);
+          translateStatus.textContent = "Translated (cached).";
+          return;
+        }
       }
     } catch (error) {
       /* ignore bad cache */
     }
     renderTranslateLoading();
     translateStatus.textContent = "Translating…";
-    const prompt = `Translate the following English text into Spanish, Korean, Japanese, and Simplified Chinese. Return ONLY valid JSON with this exact shape:
-{"es":{"translation":"...","written":"..."},"ko":{"translation":"...","written":"..."},"ja":{"translation":"...","written":"..."},"zh":{"translation":"...","written":"..."}}
+    const prompt = `Translate the following English text into Spanish, Korean, Japanese, Simplified Chinese, Italian, and Arabic. Return ONLY valid JSON with this exact shape:
+{"es":{"translation":"...","written":"..."},"ko":{"translation":"...","written":"..."},"ja":{"translation":"...","written":"..."},"zh":{"translation":"...","written":"..."},"it":{"translation":"...","written":"..."},"ar":{"translation":"...","written":"..."}}
 Rules:
 - "translation" is the natural translation in the target language's native script.
-- "written" is how it is written or pronounced for a learner: Spanish pronunciation in plain Latin letters; Korean revised romanization; Japanese romaji; Chinese pinyin with tone marks.
+- "written" is how it is written or pronounced for a learner: Spanish pronunciation in plain Latin letters; Korean revised romanization; Japanese romaji; Chinese pinyin with tone marks; Italian pronunciation in plain Latin letters; Arabic transliteration in plain Latin letters.
+- Include all six keys even when the text is a single word or number.
 - Keep numbers, names and meaning accurate.
 - No markdown, no extra text.
 
@@ -844,7 +856,7 @@ English: ${JSON.stringify(text)}`;
         body: JSON.stringify({
           model: "openai-fast",
           temperature: 0,
-          max_tokens: 600,
+          max_tokens: 1000,
           messages: [
             { role: "system", content: "You are a precise translator. Output only JSON." },
             { role: "user", content: prompt }
