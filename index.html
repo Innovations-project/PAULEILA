@@ -221,6 +221,9 @@
       <button class="tab" id="tab-translate" type="button" role="tab" aria-selected="false" aria-controls="panel-translate" data-panel="translate" tabindex="-1">
         <span aria-hidden="true">🌐</span> Translate
       </button>
+      <button class="tab" id="tab-quiz" type="button" role="tab" aria-selected="false" aria-controls="panel-quiz" data-panel="quiz" tabindex="-1">
+        <span aria-hidden="true">🐝</span> Quiz Bee
+      </button>
     </nav>
   </div>
 
@@ -495,6 +498,66 @@
     <div class="translate-grid" id="translate-grid"></div>
     <p class="tiny">Translations are AI-generated and may not be perfect. “How it’s written” shows pronunciation or romanization.</p>
   </section>
+
+  <!-- QUIZ BEE -->
+  <section class="panel" id="panel-quiz" role="tabpanel" aria-labelledby="tab-quiz" tabindex="0" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">The honeycomb challenge</p>
+        <h2>Quiz Bee</h2>
+        <p class="lede">Pick a subject, choose your grade, and answer 20 questions. Every finish earns a congratulations and a full answer review.</p>
+      </div>
+      <div class="head-actions">
+        <button class="btn btn-ghost btn-small" id="quiz-restart" type="button" hidden>Start over ↺</button>
+      </div>
+    </div>
+
+    <div class="quiz-shell" id="quiz-shell">
+      <div class="quiz-step" id="quiz-step-subject">
+        <h3>1. Choose a subject</h3>
+        <p class="quiz-sub">Five little worlds to test your genius.</p>
+        <div class="quiz-subjects" id="quiz-subjects"></div>
+      </div>
+
+      <div class="quiz-step" id="quiz-step-grade" hidden>
+        <div class="quiz-step-top">
+          <div>
+            <p class="quiz-crumb" id="quiz-crumb">Subject</p>
+            <h3>2. Choose your grade</h3>
+          </div>
+          <button class="quiz-link" id="quiz-back-subject" type="button">← Change subject</button>
+        </div>
+        <div class="quiz-grades" id="quiz-grades"></div>
+      </div>
+
+      <div class="quiz-step quiz-play" id="quiz-step-play" hidden>
+        <div class="quiz-play-top">
+          <div>
+            <p class="quiz-crumb" id="quiz-play-crumb">Subject · Grade</p>
+            <h3 id="quiz-question-number">Question 1 of 20</h3>
+          </div>
+          <div class="quiz-score-pill" id="quiz-score-pill">0 correct</div>
+        </div>
+        <div class="quiz-progress" aria-hidden="true"><span id="quiz-progress-bar"></span></div>
+        <div class="quiz-card">
+          <p class="quiz-question" id="quiz-question"></p>
+          <div class="quiz-choices" id="quiz-choices"></div>
+        </div>
+        <p class="quiz-feedback" id="quiz-feedback" aria-live="polite"></p>
+        <div class="quiz-actions">
+          <button class="btn btn-primary" id="quiz-next" type="button" disabled>Next question →</button>
+        </div>
+      </div>
+
+      <div class="quiz-step quiz-result" id="quiz-step-result" hidden>
+        <div class="quiz-congrats" id="quiz-congrats"></div>
+        <div class="quiz-review" id="quiz-review"></div>
+        <div class="quiz-actions center">
+          <button class="btn btn-primary" id="quiz-again" type="button">Try another quiz 🐝</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-foot">
@@ -511,6 +574,7 @@
       <button type="button" data-jump="books">Books</button>
       <button type="button" data-jump="bible">Bible</button>
       <button type="button" data-jump="translate">Translate</button>
+      <button type="button" data-jump="quiz">Quiz Bee</button>
     </nav>
     <p class="copyright">© <span id="year">2026</span> Pauleila. Keep asking why.</p>
   </div>
@@ -555,6 +619,7 @@
   </article>
 </div>
 
+<script src="quiz-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

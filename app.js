@@ -1282,6 +1282,431 @@ English: ${JSON.stringify(text)}`;
   });
 
 
+  /* ---------- Quiz Bee ---------- */
+
+  const quizBank = window.QUIZ_BANK || {};
+  const quizSubjects = [
+    { id: "math", label: "Mathematics", icon: "➗", blurb: "Numbers, shapes, and clever problems." },
+    { id: "science", label: "Science", icon: "🔬", blurb: "Living things, Earth, and space." },
+    { id: "english", label: "English and Language Arts", icon: "📚", blurb: "Words, grammar, and stories." },
+    { id: "history", label: "Philippine History", icon: "🇵🇭", blurb: "Heroes, places, and turning points." },
+    { id: "gk", label: "General Knowledge", icon: "🌍", blurb: "The wonderful world around us." }
+  ];
+
+  const quizSubjectEl = $("#quiz-subjects");
+  const quizGradeEl = $("#quiz-grades");
+  const quizStepSubject = $("#quiz-step-subject");
+  const quizStepGrade = $("#quiz-step-grade");
+  const quizStepPlay = $("#quiz-step-play");
+  const quizStepResult = $("#quiz-step-result");
+  const quizCrumb = $("#quiz-crumb");
+  const quizPlayCrumb = $("#quiz-play-crumb");
+  const quizQuestionNumber = $("#quiz-question-number");
+  const quizScorePill = $("#quiz-score-pill");
+  const quizProgressBar = $("#quiz-progress-bar");
+  const quizQuestion = $("#quiz-question");
+  const quizChoices = $("#quiz-choices");
+  const quizFeedback = $("#quiz-feedback");
+  const quizNext = $("#quiz-next");
+  const quizCongrats = $("#quiz-congrats");
+  const quizReview = $("#quiz-review");
+  const quizRestart = $("#quiz-restart");
+  const quizAgain = $("#quiz-again");
+  const quizBackSubject = $("#quiz-back-subject");
+
+  let quizState = null;
+
+  function quizNumericChoices(answer, allowNegative = false) {
+    const values = [String(answer)];
+    for (const offset of [1, -1, 2, -2, 3, -3, 5, -5, 10, -10]) {
+      const candidate = Number(answer) + offset;
+      if ((allowNegative || candidate >= 0) && !values.includes(String(candidate))) values.push(String(candidate));
+      if (values.length === 4) break;
+    }
+    let extra = 1;
+    while (values.length < 4) {
+      const candidate = Number(answer) + extra;
+      if ((allowNegative || candidate >= 0) && !values.includes(String(candidate))) values.push(String(candidate));
+      extra += 1;
+    }
+    return values;
+  }
+
+  function quizDecimalChoices(answer) {
+    const values = [Number(answer).toFixed(1)];
+    for (const offset of [0.1, -0.1, 0.2, -0.2, 0.5, -0.5, 1]) {
+      const candidate = (Number(answer) + offset).toFixed(1);
+      if (Number(candidate) >= 0 && !values.includes(candidate)) values.push(candidate);
+      if (values.length === 4) break;
+    }
+    return values;
+  }
+
+  function quizFractionChoices(numerator, denominator) {
+    const values = [`${numerator}/${denominator}`];
+    for (const diff of [1, -1, 2, -2, 3, -3]) {
+      const n = numerator + diff;
+      if (n > 0 && n < denominator && !values.includes(`${n}/${denominator}`)) values.push(`${n}/${denominator}`);
+      if (values.length === 4) break;
+    }
+    return values;
+  }
+
+  function generateMathQuiz(grade) {
+    const questions = [];
+    const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const add = (prompt, answer, choices) => {
+      questions.push({ q: prompt, choices: choices || quizNumericChoices(answer), answer: 0 });
+    };
+
+    if (grade === 1) {
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(1, 9);
+        const b = rand(1, 9);
+        add(`${a} + ${b} = ?`, a + b);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(5, 18);
+        const b = rand(1, a);
+        add(`${a} - ${b} = ?`, a - b);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const n = rand(1, 15);
+        add(`What is 10 more than ${n}?`, n + 10);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const n = rand(11, 20);
+        add(`What is 10 less than ${n}?`, n - 10);
+      }
+    } else if (grade === 2) {
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(10, 50);
+        const b = rand(10, 40);
+        add(`${a} + ${b} = ?`, a + b);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(30, 99);
+        const b = rand(1, a - 10);
+        add(`${a} - ${b} = ?`, a - b);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(2, 5);
+        const b = rand(1, 10);
+        add(`${a} × ${b} = ?`, a * b);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const hundreds = rand(1, 9);
+        const tens = rand(1, 9);
+        const ones = rand(1, 9);
+        const number = hundreds * 100 + tens * 10 + ones;
+        add(`What is the value of the digit ${tens} in ${number}?`, tens * 10);
+      }
+    } else if (grade === 3) {
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(2, 10);
+        const b = rand(2, 10);
+        add(`${a} × ${b} = ?`, a * b);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const divisor = rand(2, 9);
+        const quotient = rand(2, 10);
+        add(`${divisor * quotient} ÷ ${divisor} = ?`, quotient);
+      }
+      const fractionRounds = [
+        { base: "1/2", equal: "2/4", wrong: ["1/3", "2/3", "3/4"] },
+        { base: "1/3", equal: "2/6", wrong: ["1/2", "2/3", "3/4"] },
+        { base: "1/4", equal: "2/8", wrong: ["1/2", "2/3", "3/4"] },
+        { base: "2/3", equal: "4/6", wrong: ["1/2", "1/3", "3/4"] },
+        { base: "3/4", equal: "6/8", wrong: ["1/2", "1/3", "2/3"] }
+      ];
+      fractionRounds.forEach((round) => {
+        add(`Which fraction is equal to ${round.base}?`, round.equal, [round.equal, ...round.wrong]);
+      });
+      for (let i = 0; i < 5; i += 1) {
+        const length = rand(2, 10);
+        const width = rand(1, 8);
+        add(`A rectangle is ${length} cm long and ${width} cm wide. What is its perimeter?`, 2 * (length + width));
+      }
+    } else if (grade === 4) {
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(12, 40);
+        const b = rand(2, 9);
+        add(`${a} × ${b} = ?`, a * b);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const divisor = rand(2, 9);
+        const quotient = rand(4, 15);
+        add(`${divisor * quotient} ÷ ${divisor} = ?`, quotient);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const denominator = rand(6, 10);
+        const first = 1;
+        const second = rand(1, denominator - 3);
+        const sum = first + second;
+        add(`${first}/${denominator} + ${second}/${denominator} = ?`, `${sum}/${denominator}`, quizFractionChoices(sum, denominator));
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const length = rand(4, 12);
+        const width = rand(3, 9);
+        add(`A rectangle is ${length} cm long and ${width} cm wide. What is its area?`, length * width);
+      }
+    } else if (grade === 5) {
+      for (let i = 0; i < 5; i += 1) {
+        const denominator = rand(5, 10);
+        const first = rand(1, denominator - 3);
+        const second = rand(1, denominator - first - 1);
+        const sum = first + second;
+        add(`${first}/${denominator} + ${second}/${denominator} = ?`, `${sum}/${denominator}`, quizFractionChoices(sum, denominator));
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(10, 50) / 10;
+        const b = rand(10, 30) / 10;
+        const sum = Number((a + b).toFixed(1));
+        add(`${a.toFixed(1)} + ${b.toFixed(1)} = ?`, sum, quizDecimalChoices(sum));
+      }
+      const percents = [10, 20, 25, 50, 10];
+      percents.forEach((percent) => {
+        const base = rand(1, 10) * 20;
+        add(`What is ${percent}% of ${base}?`, (base * percent) / 100);
+      });
+      for (let i = 0; i < 5; i += 1) {
+        const length = rand(2, 6);
+        const width = rand(2, 5);
+        const height = rand(2, 4);
+        add(`A box is ${length} cm long, ${width} cm wide, and ${height} cm tall. What is its volume?`, length * width * height);
+      }
+    } else {
+      const ratioRounds = [
+        { a: 2, b: 3, factor: 4 },
+        { a: 3, b: 5, factor: 2 },
+        { a: 1, b: 4, factor: 5 },
+        { a: 4, b: 7, factor: 3 },
+        { a: 5, b: 6, factor: 2 }
+      ];
+      ratioRounds.forEach((round) => {
+        const correct = `${round.a}:${round.b}`;
+        add(`Simplify the ratio ${round.a * round.factor}:${round.b * round.factor}.`, correct, [
+          correct,
+          `${round.a + 1}:${round.b}`,
+          `${round.a}:${round.b + 1}`,
+          `${round.b}:${round.a}`
+        ]);
+      });
+      for (let i = 0; i < 5; i += 1) {
+        const a = rand(-10, 10);
+        const b = rand(-10, 10);
+        add(`${a} + ${b} = ?`, a + b, quizNumericChoices(a + b, true));
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const x = rand(2, 12);
+        const b = rand(2, 10);
+        add(`If x + ${b} = ${x + b}, what is x?`, x);
+      }
+      for (let i = 0; i < 5; i += 1) {
+        const base = rand(2, 8) * 2;
+        const height = rand(2, 10);
+        add(`A triangle has a base of ${base} cm and a height of ${height} cm. What is its area?`, (base * height) / 2);
+      }
+    }
+
+    return questions;
+  }
+
+  function prepareQuizQuestion(item) {
+    const choices = shuffle(item.choices.map((text, index) => ({ text, correct: index === item.answer })));
+    return {
+      prompt: item.q,
+      choices: choices.map((choice) => choice.text),
+      answer: choices.findIndex((choice) => choice.correct)
+    };
+  }
+
+  function buildQuiz(subjectId, grade) {
+    if (subjectId === "math") return generateMathQuiz(grade).map(prepareQuizQuestion);
+    const bank = quizBank[subjectId];
+    if (!bank) return [];
+    const band = grade <= 3 ? "lower" : "upper";
+    const pool = [...(bank[band] || []), ...(bank.general || [])];
+    return shuffle(pool).slice(0, 20).map(prepareQuizQuestion);
+  }
+
+  function renderQuizSubjects() {
+    quizSubjectEl.innerHTML = quizSubjects.map((subject) => `
+      <button class="quiz-subject" type="button" data-subject="${subject.id}" aria-pressed="false">
+        <span class="quiz-subject-icon" aria-hidden="true">${subject.icon}</span>
+        <strong>${esc(subject.label)}</strong>
+        <span>${esc(subject.blurb)}</span>
+      </button>
+    `).join("");
+  }
+
+  function selectQuizSubject(subjectId) {
+    const subject = quizSubjects.find((entry) => entry.id === subjectId);
+    if (!subject) return;
+    quizState = { subject: subject.id, subjectLabel: subject.label, grade: null, questions: [], index: 0, score: 0, answered: false, answers: [] };
+    $$(".quiz-subject", quizSubjectEl).forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.subject === subjectId)));
+    quizCrumb.textContent = subject.label;
+    quizStepSubject.hidden = true;
+    quizStepGrade.hidden = false;
+    quizStepPlay.hidden = true;
+    quizStepResult.hidden = true;
+    quizRestart.hidden = false;
+    renderQuizGrades();
+    quizGradeEl.querySelector(".quiz-grade")?.focus();
+  }
+
+  function renderQuizGrades() {
+    quizGradeEl.innerHTML = [1, 2, 3, 4, 5, 6].map((grade) => `
+      <button class="quiz-grade" type="button" data-grade="${grade}" aria-pressed="false">
+        <span class="quiz-grade-num" aria-hidden="true">${grade}</span>
+        <strong>Grade ${grade}</strong>
+        <small>${grade <= 3 ? "Foundations" : "Challenge"}</small>
+      </button>
+    `).join("");
+  }
+
+  function startQuiz(grade) {
+    if (!quizState) return;
+    const questions = buildQuiz(quizState.subject, grade);
+    if (!questions.length) return;
+    quizState = { ...quizState, grade, questions, index: 0, score: 0, answered: false, answers: [] };
+    quizPlayCrumb.textContent = `${quizState.subjectLabel} · Grade ${grade}`;
+    quizStepGrade.hidden = true;
+    quizStepPlay.hidden = false;
+    quizStepResult.hidden = true;
+    quizRestart.hidden = false;
+    renderQuizQuestion();
+  }
+
+  function renderQuizQuestion() {
+    if (!quizState || quizState.index >= quizState.questions.length) return;
+    const question = quizState.questions[quizState.index];
+    quizState.answered = false;
+    quizQuestionNumber.textContent = `Question ${quizState.index + 1} of ${quizState.questions.length}`;
+    quizScorePill.textContent = `${quizState.score} correct`;
+    quizProgressBar.style.width = `${(quizState.index / quizState.questions.length) * 100}%`;
+    quizQuestion.textContent = question.prompt;
+    quizFeedback.textContent = "";
+    quizFeedback.className = "quiz-feedback";
+    quizNext.disabled = true;
+    quizNext.textContent = quizState.index === quizState.questions.length - 1 ? "See my results 🐝" : "Next question →";
+    quizChoices.innerHTML = question.choices.map((choice, index) => `
+      <button class="quiz-choice" type="button" data-choice="${index}">
+        <span class="quiz-choice-letter" aria-hidden="true">${String.fromCharCode(65 + index)}</span>
+        <span>${esc(choice)}</span>
+      </button>
+    `).join("");
+    $$(".quiz-choice", quizChoices).forEach((button) => {
+      button.addEventListener("click", () => answerQuizQuestion(Number(button.dataset.choice)));
+    });
+  }
+
+  function answerQuizQuestion(choiceIndex) {
+    if (!quizState || quizState.answered) return;
+    const question = quizState.questions[quizState.index];
+    const isCorrect = choiceIndex === question.answer;
+    quizState.answered = true;
+    if (isCorrect) quizState.score += 1;
+    quizState.answers.push({
+      prompt: question.prompt,
+      choices: question.choices,
+      chosen: choiceIndex,
+      correct: question.answer
+    });
+    $$(".quiz-choice", quizChoices).forEach((button, index) => {
+      button.disabled = true;
+      if (index === question.answer) button.classList.add("is-correct");
+      if (index === choiceIndex && !isCorrect) button.classList.add("is-wrong");
+    });
+    quizScorePill.textContent = `${quizState.score} correct`;
+    quizProgressBar.style.width = `${((quizState.index + 1) / quizState.questions.length) * 100}%`;
+    if (isCorrect) {
+      quizFeedback.textContent = "Correct! Sweet work, Quiz Bee.";
+      quizFeedback.classList.add("is-good");
+    } else {
+      quizFeedback.textContent = `Not quite. The correct answer is ${question.choices[question.answer]}.`;
+      quizFeedback.classList.add("is-bad");
+    }
+    quizNext.disabled = false;
+    quizNext.focus({ preventScroll: true });
+  }
+
+  function advanceQuiz() {
+    if (!quizState || !quizState.answered) return;
+    if (quizState.index >= quizState.questions.length - 1) {
+      finishQuiz();
+      return;
+    }
+    quizState.index += 1;
+    renderQuizQuestion();
+  }
+
+  function finishQuiz() {
+    if (!quizState) return;
+    const total = quizState.questions.length;
+    const score = quizState.score;
+    const message = score === total
+      ? "Perfect score! You are the queen bee of this hive."
+      : score >= Math.ceil(total * 0.7)
+        ? "That is a strong finish — your brain is buzzing!"
+        : "You finished every question, and that is how genius grows. Keep buzzing!";
+    quizStepPlay.hidden = true;
+    quizStepResult.hidden = false;
+    quizCongrats.innerHTML = `
+      <span class="quiz-trophy" aria-hidden="true">🐝</span>
+      <p class="eyebrow">Quiz complete</p>
+      <h3>Congratulations, Quiz Bee champion!</h3>
+      <p>You answered <strong>${score} of ${total}</strong> questions correctly in <strong>${esc(quizState.subjectLabel)} · Grade ${quizState.grade}</strong>.</p>
+      <p>${message}</p>
+    `;
+    quizReview.innerHTML = quizState.answers.map((answer, index) => {
+      const selected = answer.choices[answer.chosen];
+      const correct = answer.choices[answer.correct];
+      const isCorrect = answer.chosen === answer.correct;
+      return `
+        <article class="quiz-review-item ${isCorrect ? "is-correct" : "is-wrong"}">
+          <p class="quiz-review-q"><span>${index + 1}</span>${esc(answer.prompt)}</p>
+          <p class="quiz-review-answer ${isCorrect ? "correct" : "wrong"}"><strong>Your answer:</strong> ${esc(selected)} ${isCorrect ? "✓" : "✕"}</p>
+          ${isCorrect ? "" : `<p class="quiz-review-answer correct"><strong>Correct answer:</strong> ${esc(correct)}</p>`}
+        </article>
+      `;
+    }).join("");
+    quizStepResult.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+  }
+
+  function resetQuiz() {
+    quizState = null;
+    quizStepSubject.hidden = false;
+    quizStepGrade.hidden = true;
+    quizStepPlay.hidden = true;
+    quizStepResult.hidden = true;
+    quizRestart.hidden = true;
+    quizGradeEl.innerHTML = "";
+    quizFeedback.textContent = "";
+    quizFeedback.className = "quiz-feedback";
+    quizNext.disabled = true;
+    quizProgressBar.style.width = "0%";
+    quizCongrats.innerHTML = "";
+    quizReview.innerHTML = "";
+    $$(".quiz-subject", quizSubjectEl).forEach((button) => button.setAttribute("aria-pressed", "false"));
+    quizStepSubject.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+  }
+
+  renderQuizSubjects();
+  quizSubjectEl.addEventListener("click", (event) => {
+    const button = event.target.closest(".quiz-subject");
+    if (button) selectQuizSubject(button.dataset.subject);
+  });
+  quizGradeEl.addEventListener("click", (event) => {
+    const button = event.target.closest(".quiz-grade");
+    if (button) startQuiz(Number(button.dataset.grade));
+  });
+  quizNext.addEventListener("click", advanceQuiz);
+  quizRestart.addEventListener("click", resetQuiz);
+  quizAgain.addEventListener("click", resetQuiz);
+  quizBackSubject.addEventListener("click", resetQuiz);
+
+
   /* ---------- Bible: Gospel of the day ---------- */
 
   const gospelCard = $("#gospel-card");
