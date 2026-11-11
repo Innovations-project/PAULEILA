@@ -1146,11 +1146,11 @@
   const translateGrid = $("#translate-grid");
 
   const translateLangs = [
-    { code: "es", name: "Spanish", flag: "🇪🇸", note: "español" },
-    { code: "ko", name: "Korean", flag: "🇰🇷", note: "한국어" },
     { code: "ja", name: "Japanese", flag: "🇯🇵", note: "日本語" },
+    { code: "ko", name: "Korean", flag: "🇰🇷", note: "한국어" },
     { code: "zh", name: "Chinese", flag: "🇨🇳", note: "中文" },
     { code: "it", name: "Italian", flag: "🇮🇹", note: "italiano" },
+    { code: "es", name: "Spanish", flag: "🇪🇸", note: "español" },
     { code: "ar", name: "Arabic", flag: "🇸🇦", note: "العربية" }
   ];
 
@@ -1193,7 +1193,7 @@
   async function doTranslate() {
     const text = (translateInput.value || "").trim();
     if (!text) {
-      translateStatus.textContent = "Type a word, number, or phrase first.";
+      translateStatus.textContent = "Type a word, phrase, or full sentence first.";
       return;
     }
     const cached = translateCache.get(text);
@@ -1218,26 +1218,26 @@
     }
     renderTranslateLoading();
     translateStatus.textContent = "Translating…";
-    const prompt = `Translate the following English text into Spanish, Korean, Japanese, Simplified Chinese, Italian, and Arabic. Return ONLY valid JSON with this exact shape:
-{"es":{"translation":"...","written":"..."},"ko":{"translation":"...","written":"..."},"ja":{"translation":"...","written":"..."},"zh":{"translation":"...","written":"..."},"it":{"translation":"...","written":"..."},"ar":{"translation":"...","written":"..."}}
+    const prompt = `Translate the following English text into Japanese, Korean, Simplified Chinese, Italian, Spanish, and Arabic. The text may be a word, phrase, or complete sentence. Return ONLY valid JSON with this exact shape:
+{"ja":{"translation":"...","written":"..."},"ko":{"translation":"...","written":"..."},"zh":{"translation":"...","written":"..."},"it":{"translation":"...","written":"..."},"es":{"translation":"...","written":"..."},"ar":{"translation":"...","written":"..."}}
 Rules:
-- "translation" is the natural translation in the target language's native script.
-- "written" is how it is written or pronounced for a learner: Spanish pronunciation in plain Latin letters; Korean revised romanization; Japanese romaji; Chinese pinyin with tone marks; Italian pronunciation in plain Latin letters; Arabic transliteration in plain Latin letters.
-- Include all six keys even when the text is a single word or number.
+- "translation" is a natural, fluent translation in the target language's native script. For whole sentences, translate the complete meaning naturally rather than word-for-word; keep the tone, names, numbers, and punctuation.
+- "written" is how the full translation is written or pronounced for a learner: Japanese romaji; Korean revised romanization; Chinese pinyin with tone marks; Italian pronunciation in plain Latin letters; Spanish pronunciation in plain Latin letters; Arabic transliteration in plain Latin letters.
+- Include all six keys even when the text is a short word or number.
 - Keep numbers, names and meaning accurate.
 - No markdown, no extra text.
 
 English: ${JSON.stringify(text)}`;
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 45000);
+      const timer = setTimeout(() => controller.abort(), 60000);
       const response = await fetch("https://text.pollinations.ai/openai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "openai-fast",
           temperature: 0,
-          max_tokens: 1000,
+          max_tokens: 1800,
           messages: [
             { role: "system", content: "You are a precise translator. Output only JSON." },
             { role: "user", content: prompt }
