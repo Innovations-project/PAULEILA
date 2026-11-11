@@ -706,7 +706,7 @@
     renderGrade(0);
   }
 
-  /* ---------- Words of Wisdom ---------- */
+  /* ---------- Magic 8 Ball ---------- */
 
   const wisdomBall = $("#wisdom-ball");
   const wisdomBallText = $("#wisdom-ball-text");
@@ -763,11 +763,11 @@
   }
 
   function revealWisdom() {
-    if (!wisdomBall || wisdomBall.classList.contains("is-shaking") || wisdomBall.classList.contains("is-thinking")) return;
+    if (!wisdomBall || wisdomBall.classList.contains("is-thinking")) return;
 
     clearTimeout(wisdomTimer);
     wisdomBall.classList.remove("is-lit", "has-answer");
-    wisdomBall.classList.add("is-shaking", "is-thinking");
+    wisdomBall.classList.add("is-thinking");
     wisdomBall.setAttribute("aria-busy", "true");
     wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
     wisdomMessage.removeAttribute("aria-label");
@@ -789,7 +789,7 @@
       wisdomMessage.classList.toggle("is-longer", fortune.text.length > 46);
       wisdomSub.textContent = fortune.note;
       wisdomCount.textContent = wisdomReveals === 1 ? "1 wish" : `${wisdomReveals} wishes`;
-      wisdomBall.classList.remove("is-shaking", "is-thinking");
+      wisdomBall.classList.remove("is-thinking");
       wisdomBall.classList.add("is-lit", "has-answer");
       wisdomBall.setAttribute("aria-busy", "false");
       void wisdomMessage.offsetWidth;
@@ -807,7 +807,7 @@
       clearTimeout(wisdomTimer);
       wisdomReveals = 0;
       wisdomLast = -1;
-      wisdomBall.classList.remove("is-shaking", "is-thinking", "is-lit", "has-answer");
+      wisdomBall.classList.remove("is-thinking", "is-lit", "has-answer");
       wisdomBallText.textContent = "8";
       wisdomBall.setAttribute("aria-busy", "false");
       wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
