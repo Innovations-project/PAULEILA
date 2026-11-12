@@ -2447,6 +2447,1103 @@ English: ${JSON.stringify(text)}`;
 
   renderScramble();
 
+  /* ---------- Game 4: Flag Detective ---------- */
+
+  const flagCountries = [
+    { code: "ph", name: "Philippines" },
+    { code: "jp", name: "Japan" },
+    { code: "kr", name: "South Korea" },
+    { code: "cn", name: "China" },
+    { code: "in", name: "India" },
+    { code: "th", name: "Thailand" },
+    { code: "vn", name: "Vietnam" },
+    { code: "id", name: "Indonesia" },
+    { code: "my", name: "Malaysia" },
+    { code: "sg", name: "Singapore" },
+    { code: "au", name: "Australia" },
+    { code: "nz", name: "New Zealand" },
+    { code: "us", name: "United States" },
+    { code: "ca", name: "Canada" },
+    { code: "mx", name: "Mexico" },
+    { code: "br", name: "Brazil" },
+    { code: "ar", name: "Argentina" },
+    { code: "gb", name: "United Kingdom" },
+    { code: "fr", name: "France" },
+    { code: "de", name: "Germany" },
+    { code: "it", name: "Italy" },
+    { code: "es", name: "Spain" },
+    { code: "pt", name: "Portugal" },
+    { code: "nl", name: "Netherlands" },
+    { code: "se", name: "Sweden" },
+    { code: "no", name: "Norway" },
+    { code: "ch", name: "Switzerland" },
+    { code: "gr", name: "Greece" },
+    { code: "tr", name: "Turkey" },
+    { code: "eg", name: "Egypt" },
+    { code: "za", name: "South Africa" },
+    { code: "ke", name: "Kenya" },
+    { code: "ng", name: "Nigeria" },
+    { code: "sa", name: "Saudi Arabia" },
+    { code: "ae", name: "United Arab Emirates" },
+    { code: "ru", name: "Russia" },
+    { code: "ua", name: "Ukraine" },
+    { code: "pl", name: "Poland" },
+    { code: "ie", name: "Ireland" },
+    { code: "at", name: "Austria" },
+    { code: "dk", name: "Denmark" },
+    { code: "fi", name: "Finland" },
+    { code: "is", name: "Iceland" },
+    { code: "be", name: "Belgium" }
+  ];
+
+  const flagImageEl = $("#flag-image");
+  const flagPlaceholder = $("#flag-placeholder");
+  const flagProgress = $("#flag-progress");
+  const flagOptions = $("#flag-options");
+  const flagScore = $("#flag-score");
+  const flagStatus = $("#flag-status");
+  const flagStart = $("#flag-start");
+  const flagReview = $("#flag-review");
+
+  const flagState = {
+    playing: false,
+    locked: false,
+    round: 0,
+    score: 0,
+    questions: [],
+    timer: null
+  };
+
+  const flagUrl = (code, width = 320) => `https://flagcdn.com/w${width}/${code}.png`;
+
+  function startFlagGame() {
+    if (flagState.timer !== null) {
+      window.clearTimeout(flagState.timer);
+      flagState.timer = null;
+    }
+    flagState.playing = true;
+    flagState.locked = false;
+    flagState.round = 0;
+    flagState.score = 0;
+    flagState.questions = shuffle(flagCountries).slice(0, 10).map((country) => {
+      const distractors = shuffle(flagCountries.filter((entry) => entry.code !== country.code)).slice(0, 3);
+      return { country, choices: shuffle([country, ...distractors]), chosen: null };
+    });
+    flagScore.textContent = "0 / 10";
+    flagStart.textContent = "Restart challenge";
+    flagReview.hidden = true;
+    flagReview.innerHTML = "";
+    flagStatus.textContent = "Which country does this flag belong to?";
+    flagStatus.className = "game-status";
+    renderFlagQuestion();
+  }
+
+  function renderFlagQuestion() {
+    const question = flagState.questions[flagState.round];
+    if (!question) return;
+    flagState.locked = false;
+    flagImageEl.src = flagUrl(question.country.code);
+    flagImageEl.alt = "Mystery flag";
+    flagImageEl.hidden = false;
+    flagPlaceholder.hidden = true;
+    flagProgress.textContent = `Flag ${flagState.round + 1} of 10`;
+    flagOptions.innerHTML = question.choices.map((country, index) => `
+      <button class="flag-option" type="button" data-index="${index}">${esc(country.name)}</button>
+    `).join("");
+    $$(".flag-option", flagOptions).forEach((button) => {
+      button.addEventListener("click", () => chooseFlag(Number(button.dataset.index)));
+    });
+  }
+
+  function chooseFlag(index) {
+    if (!flagState.playing || flagState.locked) return;
+    flagState.locked = true;
+    const question = flagState.questions[flagState.round];
+    const selected = question.choices[index];
+    const isCorrect = selected.code === question.country.code;
+    question.chosen = index;
+    if (isCorrect) flagState.score += 1;
+    flagScore.textContent = `${flagState.score} / 10`;
+    $$(".flag-option", flagOptions).forEach((button, buttonIndex) => {
+      button.disabled = true;
+      if (buttonIndex === index) button.classList.add("is-chosen");
+    });
+    flagStatus.textContent = "Guess saved. Next flag…";
+    flagStatus.className = "game-status good";
+    flagState.timer = window.setTimeout(() => {
+      flagState.timer = null;
+      if (!flagState.playing) return;
+      if (flagState.round >= flagState.questions.length - 1) {
+        finishFlagGame();
+        return;
+      }
+      flagState.round += 1;
+      renderFlagQuestion();
+    }, 500);
+  }
+
+  function finishFlagGame() {
+    flagState.playing = false;
+    flagState.locked = true;
+    flagImageEl.hidden = true;
+    flagPlaceholder.hidden = false;
+    flagPlaceholder.innerHTML = '<span aria-hidden="true">🏁</span><small>All 10 flags</small>';
+    flagProgress.textContent = `You named ${flagState.score} of 10`;
+    flagOptions.innerHTML = "";
+    flagStart.textContent = "Play again";
+    const message = flagState.score >= 8
+      ? "Flag master!"
+      : flagState.score >= 5
+        ? "Sharp eyes!"
+        : "Every flag is a new place to learn.";
+    flagStatus.textContent = `${message} You got ${flagState.score} of 10. The correct answers are below.`;
+    flagStatus.className = flagState.score >= 8 ? "game-status win" : "game-status good";
+    flagReview.hidden = false;
+    flagReview.innerHTML = `
+      <h4>Correct answers</h4>
+      <div class="flag-review-grid">
+        ${flagState.questions.map((question, index) => {
+          const chosen = question.choices[question.chosen];
+          const isCorrect = chosen.code === question.country.code;
+          return `
+            <div class="flag-review-row ${isCorrect ? "is-correct" : "is-wrong"}">
+              <img src="${flagUrl(question.country.code, 80)}" alt="${esc(question.country.name)} flag" width="38" height="26" loading="lazy" decoding="async" />
+              <div>
+                <strong>${index + 1}. ${esc(question.country.name)}</strong>
+                <span>Your guess: ${esc(chosen.name)} ${isCorrect ? "✓" : "✕"}</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  flagStart.addEventListener("click", startFlagGame);
+
+
+  /* ---------- Game 5: Pattern Path ---------- */
+
+  const patternSequenceEl = $("#pattern-sequence");
+  const patternProgress = $("#pattern-progress");
+  const patternOptions = $("#pattern-options");
+  const patternScore = $("#pattern-score");
+  const patternFeedback = $("#pattern-feedback");
+  const patternStart = $("#pattern-start");
+  const patternNext = $("#pattern-next");
+  const patternReview = $("#pattern-review");
+
+  const patternState = {
+    playing: false,
+    locked: false,
+    answered: false,
+    round: 0,
+    score: 0,
+    questions: []
+  };
+
+  function patternChoices(answer) {
+    const values = [answer];
+    for (const offset of [1, -1, 2, -2, 3, -3, 4, -4, 5, -5, 10, -10]) {
+      const candidate = answer + offset;
+      if (candidate >= 0 && !values.includes(candidate)) values.push(candidate);
+      if (values.length === 4) break;
+    }
+    let extra = 1;
+    while (values.length < 4) {
+      if (!values.includes(answer + extra)) values.push(answer + extra);
+      extra += 1;
+    }
+    return values;
+  }
+
+  function makePatternQuestion() {
+    const type = Math.floor(Math.random() * 4);
+    if (type === 0) {
+      const start = 1 + Math.floor(Math.random() * 12);
+      const step = 2 + Math.floor(Math.random() * 8);
+      return {
+        sequence: [start, start + step, start + 2 * step, start + 3 * step],
+        answer: start + 4 * step,
+        rule: `Add ${step} each time.`
+      };
+    }
+    if (type === 1) {
+      const start = 1 + Math.floor(Math.random() * 3);
+      const factor = 2 + Math.floor(Math.random() * 2);
+      return {
+        sequence: [start, start * factor, start * factor ** 2, start * factor ** 3],
+        answer: start * factor ** 4,
+        rule: `Multiply by ${factor} each time.`
+      };
+    }
+    if (type === 2) {
+      const start = 1 + Math.floor(Math.random() * 8);
+      const first = 2 + Math.floor(Math.random() * 4);
+      let second = 1 + Math.floor(Math.random() * 4);
+      if (second === first) second += 1;
+      return {
+        sequence: [start, start + first, start + first + second, start + 2 * first + second],
+        answer: start + 2 * first + 2 * second,
+        rule: `Add ${first}, then ${second}, and repeat.`
+      };
+    }
+    const start = 1 + Math.floor(Math.random() * 4);
+    return {
+      sequence: [start * start, (start + 1) ** 2, (start + 2) ** 2, (start + 3) ** 2],
+      answer: (start + 4) ** 2,
+      rule: "These are square numbers."
+    };
+  }
+
+  function startPatternGame() {
+    const questions = [];
+    const seen = new Set();
+    let attempts = 0;
+    while (questions.length < 8 && attempts < 300) {
+      const question = makePatternQuestion();
+      const key = question.sequence.join(",");
+      attempts += 1;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const choices = shuffle(patternChoices(question.answer));
+      questions.push({ ...question, choices, chosen: null });
+    }
+    let fallback = 1;
+    while (questions.length < 8) {
+      const step = 2 + (fallback % 5);
+      const start = fallback * 4 + 1;
+      const sequence = [start, start + step, start + 2 * step, start + 3 * step];
+      const key = sequence.join(",");
+      if (!seen.has(key)) {
+        seen.add(key);
+        const answer = start + 4 * step;
+        questions.push({
+          sequence,
+          answer,
+          rule: `Add ${step} each time.`,
+          choices: shuffle(patternChoices(answer)),
+          chosen: null
+        });
+      }
+      fallback += 1;
+    }
+    Object.assign(patternState, { playing: true, locked: false, answered: false, round: 0, score: 0, questions });
+    patternScore.textContent = "0 / 8";
+    patternStart.textContent = "Restart puzzles";
+    patternFeedback.textContent = "Find the rule and choose what comes next.";
+    patternFeedback.className = "logic-feedback";
+    patternReview.hidden = true;
+    patternReview.innerHTML = "";
+    renderPatternQuestion();
+  }
+
+  function renderPatternQuestion() {
+    const question = patternState.questions[patternState.round];
+    if (!question) return;
+    patternState.locked = false;
+    patternState.answered = false;
+    patternProgress.textContent = `Puzzle ${patternState.round + 1} of 8`;
+    patternSequenceEl.innerHTML = [
+      ...question.sequence.map((value) => `<span class="pattern-tile">${value}</span>`),
+      '<span class="pattern-tile is-missing">?</span>'
+    ].join("");
+    patternOptions.innerHTML = question.choices.map((value, index) => `
+      <button class="logic-option" type="button" data-index="${index}">${value}</button>
+    `).join("");
+    $$(".logic-option", patternOptions).forEach((button) => {
+      button.addEventListener("click", () => choosePattern(Number(button.dataset.index)));
+    });
+    patternNext.hidden = true;
+    patternFeedback.textContent = "What comes next?";
+    patternFeedback.className = "logic-feedback";
+  }
+
+  function choosePattern(index) {
+    if (!patternState.playing || patternState.locked) return;
+    patternState.locked = true;
+    patternState.answered = true;
+    const question = patternState.questions[patternState.round];
+    const selected = question.choices[index];
+    const correct = selected === question.answer;
+    question.chosen = index;
+    if (correct) patternState.score += 1;
+    patternScore.textContent = `${patternState.score} / 8`;
+    $$(".logic-option", patternOptions).forEach((button, buttonIndex) => {
+      button.disabled = true;
+      if (question.choices[buttonIndex] === question.answer) button.classList.add("is-correct");
+      if (buttonIndex === index && !correct) button.classList.add("is-wrong");
+    });
+    patternFeedback.textContent = correct
+      ? `Correct! ${question.rule}`
+      : `Not quite. ${question.rule} The answer is ${question.answer}.`;
+    patternFeedback.className = `logic-feedback ${correct ? "is-good" : "is-bad"}`;
+    patternNext.hidden = false;
+    patternNext.textContent = patternState.round === patternState.questions.length - 1 ? "See answers →" : "Next puzzle →";
+  }
+
+  function advancePattern() {
+    if (!patternState.playing || !patternState.answered) return;
+    if (patternState.round >= patternState.questions.length - 1) {
+      finishPatternGame();
+      return;
+    }
+    patternState.round += 1;
+    renderPatternQuestion();
+  }
+
+  function finishPatternGame() {
+    patternState.playing = false;
+    patternState.locked = true;
+    patternState.answered = false;
+    patternOptions.innerHTML = "";
+    patternNext.hidden = true;
+    patternStart.textContent = "Play again";
+    patternSequenceEl.innerHTML = '<span class="logic-idle">All 8 patterns solved. Answers below.</span>';
+    patternProgress.textContent = "8 of 8 solved";
+    const message = patternState.score >= 7
+      ? "Pattern master!"
+      : patternState.score >= 5
+        ? "Sharp thinking!"
+        : "Patterns are rules in disguise. Try again!";
+    patternFeedback.textContent = `${message} You solved ${patternState.score} of 8.`;
+    patternFeedback.className = patternState.score >= 7 ? "logic-feedback is-good" : "logic-feedback";
+    patternReview.hidden = false;
+    patternReview.innerHTML = `
+      <h4>Pattern answers</h4>
+      <div class="logic-review-list">
+        ${patternState.questions.map((question, index) => {
+          const chosen = question.chosen === null ? "—" : question.choices[question.chosen];
+          const correct = question.chosen !== null && question.choices[question.chosen] === question.answer;
+          return `
+            <div class="logic-review-row ${correct ? "is-correct" : "is-wrong"}">
+              <span class="logic-review-num">${index + 1}</span>
+              <div>
+                <strong>${question.sequence.join(" → ")} → ${question.answer}</strong>
+                <span>Your answer: ${chosen}. ${question.rule}</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  patternStart.addEventListener("click", startPatternGame);
+  patternNext.addEventListener("click", advancePattern);
+
+
+  /* ---------- Game 6: Odd One Out ---------- */
+
+  const oddPuzzles = [
+    { items: ["Apple", "Banana", "Carrot", "Mango"], odd: "Carrot", reason: "A carrot is a vegetable; the others are fruits." },
+    { items: ["Circle", "Square", "Triangle", "Cube"], odd: "Cube", reason: "A cube is 3D; the others are flat shapes." },
+    { items: ["Dog", "Cat", "Eagle", "Cow"], odd: "Eagle", reason: "An eagle is a bird; the others are mammals." },
+    { items: ["2", "4", "6", "9"], odd: "9", reason: "9 is odd; the others are even." },
+    { items: ["Red", "Blue", "Green", "Circle"], odd: "Circle", reason: "A circle is a shape; the others are colors." },
+    { items: ["Rose", "Tulip", "Daisy", "Oak"], odd: "Oak", reason: "An oak is a tree; the others are flowers." },
+    { items: ["Piano", "Guitar", "Violin", "Drum"], odd: "Drum", reason: "A drum is percussion; the others are string instruments." },
+    { items: ["Eyes", "Ears", "Nose", "Gloves"], odd: "Gloves", reason: "Gloves are clothing; the others are body parts." },
+    { items: ["Manila", "Cebu", "Davao", "Tokyo"], odd: "Tokyo", reason: "Tokyo is in Japan; the others are cities in the Philippines." },
+    { items: ["Mercury", "Venus", "Earth", "Moon"], odd: "Moon", reason: "The Moon is a moon; the others are planets." },
+    { items: ["Triangle", "Square", "Rectangle", "Sphere"], odd: "Sphere", reason: "A sphere is 3D; the others are flat shapes." },
+    { items: ["3", "5", "7", "9"], odd: "9", reason: "9 is composite; 3, 5, and 7 are prime." },
+    { items: ["Happy", "Joyful", "Glad", "Angry"], odd: "Angry", reason: "Angry is not a synonym for happy." },
+    { items: ["Book", "Pencil", "Notebook", "Spoon"], odd: "Spoon", reason: "A spoon is not a school supply." },
+    { items: ["Basketball", "Soccer", "Tennis", "Chess"], odd: "Chess", reason: "Chess is a board game; the others are sports." },
+    { items: ["Luzon", "Visayas", "Mindanao", "Palawan"], odd: "Palawan", reason: "Palawan is an island; the others are the three main island groups of the Philippines." },
+    { items: ["Peso", "Yen", "Dollar", "Manila"], odd: "Manila", reason: "Manila is a city; the others are currencies." },
+    { items: ["Rain", "Snow", "Hail", "Sunshine"], odd: "Sunshine", reason: "Sunshine is not precipitation; the others fall from clouds." }
+  ];
+
+  const oddPrompt = $("#odd-prompt");
+  const oddProgress = $("#odd-progress");
+  const oddOptions = $("#odd-options");
+  const oddScore = $("#odd-score");
+  const oddFeedback = $("#odd-feedback");
+  const oddStart = $("#odd-start");
+  const oddNext = $("#odd-next");
+  const oddReview = $("#odd-review");
+
+  const oddState = {
+    playing: false,
+    locked: false,
+    answered: false,
+    round: 0,
+    score: 0,
+    questions: []
+  };
+
+  function startOddGame() {
+    const questions = shuffle(oddPuzzles).slice(0, 8).map((puzzle) => {
+      const items = shuffle([...puzzle.items]);
+      return {
+        items,
+        odd: puzzle.odd,
+        reason: puzzle.reason,
+        answerIndex: items.indexOf(puzzle.odd),
+        chosen: null
+      };
+    });
+    Object.assign(oddState, { playing: true, locked: false, answered: false, round: 0, score: 0, questions });
+    oddScore.textContent = "0 / 8";
+    oddStart.textContent = "Restart puzzles";
+    oddPrompt.textContent = "Which one doesn't belong?";
+    oddFeedback.textContent = "Choose the item that breaks the pattern.";
+    oddFeedback.className = "logic-feedback";
+    oddReview.hidden = true;
+    oddReview.innerHTML = "";
+    renderOddQuestion();
+  }
+
+  function renderOddQuestion() {
+    const question = oddState.questions[oddState.round];
+    if (!question) return;
+    oddState.locked = false;
+    oddState.answered = false;
+    oddProgress.textContent = `Puzzle ${oddState.round + 1} of 8`;
+    oddOptions.innerHTML = question.items.map((item, index) => `
+      <button class="logic-option" type="button" data-index="${index}">${esc(item)}</button>
+    `).join("");
+    $$(".logic-option", oddOptions).forEach((button) => {
+      button.addEventListener("click", () => chooseOdd(Number(button.dataset.index)));
+    });
+    oddNext.hidden = true;
+    oddFeedback.textContent = "Which item is the odd one out?";
+    oddFeedback.className = "logic-feedback";
+  }
+
+  function chooseOdd(index) {
+    if (!oddState.playing || oddState.locked) return;
+    oddState.locked = true;
+    oddState.answered = true;
+    const question = oddState.questions[oddState.round];
+    const correct = index === question.answerIndex;
+    question.chosen = index;
+    if (correct) oddState.score += 1;
+    oddScore.textContent = `${oddState.score} / 8`;
+    $$(".logic-option", oddOptions).forEach((button, buttonIndex) => {
+      button.disabled = true;
+      if (buttonIndex === question.answerIndex) button.classList.add("is-correct");
+      if (buttonIndex === index && !correct) button.classList.add("is-wrong");
+    });
+    oddFeedback.textContent = correct
+      ? `Correct! ${question.reason}`
+      : `Not quite. ${question.reason}`;
+    oddFeedback.className = `logic-feedback ${correct ? "is-good" : "is-bad"}`;
+    oddNext.hidden = false;
+    oddNext.textContent = oddState.round === oddState.questions.length - 1 ? "See answers →" : "Next puzzle →";
+  }
+
+  function advanceOdd() {
+    if (!oddState.playing || !oddState.answered) return;
+    if (oddState.round >= oddState.questions.length - 1) {
+      finishOddGame();
+      return;
+    }
+    oddState.round += 1;
+    renderOddQuestion();
+  }
+
+  function finishOddGame() {
+    oddState.playing = false;
+    oddState.locked = true;
+    oddState.answered = false;
+    oddOptions.innerHTML = "";
+    oddNext.hidden = true;
+    oddStart.textContent = "Play again";
+    oddPrompt.textContent = "All 8 puzzles solved";
+    oddProgress.textContent = "8 of 8 solved";
+    const message = oddState.score >= 7
+      ? "Logic master!"
+      : oddState.score >= 5
+        ? "Sharp eyes!"
+        : "Every puzzle teaches you a new rule. Try again!";
+    oddFeedback.textContent = `${message} You solved ${oddState.score} of 8.`;
+    oddFeedback.className = oddState.score >= 7 ? "logic-feedback is-good" : "logic-feedback";
+    oddReview.hidden = false;
+    oddReview.innerHTML = `
+      <h4>Odd-one-out answers</h4>
+      <div class="logic-review-list">
+        ${oddState.questions.map((question, index) => {
+          const chosen = question.chosen === null ? "—" : question.items[question.chosen];
+          const correct = question.chosen === question.answerIndex;
+          return `
+            <div class="logic-review-row ${correct ? "is-correct" : "is-wrong"}">
+              <span class="logic-review-num">${index + 1}</span>
+              <div>
+                <strong>Odd one out: ${esc(question.odd)}</strong>
+                <span>${esc(question.reason)} Your answer: ${esc(chosen)}.</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  oddStart.addEventListener("click", startOddGame);
+  oddNext.addEventListener("click", advanceOdd);
+
+
+  /* ---------- Game 7: Moonbase Manager ---------- */
+
+  const moonSol = $("#moon-sol");
+  const moonStart = $("#moon-start");
+  const moonNext = $("#moon-next");
+  const moonStatus = $("#moon-status");
+  const moonLog = $("#moon-log");
+  const moonActions = $("#moon-actions");
+  const moonReview = $("#moon-review");
+
+  const moonResourcesList = ["oxygen", "food", "energy"];
+  const moonResourceEls = {
+    oxygen: { value: $("#moon-oxygen"), bar: $("#moon-oxygen-bar"), card: $("#moon-oxygen-card") },
+    food: { value: $("#moon-food"), bar: $("#moon-food-bar"), card: $("#moon-food-card") },
+    energy: { value: $("#moon-energy"), bar: $("#moon-energy-bar"), card: $("#moon-energy-card") }
+  };
+
+  const moonActionsList = [
+    { id: "food", label: "Plant crops", note: "+3 food · −1 energy", delta: { food: 3, energy: -1 } },
+    { id: "oxygen", label: "Run scrubbers", note: "+3 oxygen · −1 food", delta: { oxygen: 3, food: -1 } },
+    { id: "energy", label: "Charge cells", note: "+3 energy · −1 oxygen", delta: { energy: 3, oxygen: -1 } }
+  ];
+
+  const moonEvents = [
+    { text: "A dust storm drains the batteries.", note: "−2 energy", delta: { energy: -2 } },
+    { text: "A tiny meteor punctures an air line.", note: "−2 oxygen", delta: { oxygen: -2 } },
+    { text: "The hydroponics bay blooms.", note: "+2 food", delta: { food: 2 } },
+    { text: "A solar flare overloads the grid.", note: "−1 oxygen, −1 energy", delta: { oxygen: -1, energy: -1 } },
+    { text: "A supply pod lands nearby.", note: "+1 to every supply", delta: { oxygen: 1, food: 1, energy: 1 } },
+    { text: "A quiet sol passes on the base.", note: "No change", delta: {} },
+    { text: "The recycler needs a reset.", note: "−1 oxygen", delta: { oxygen: -1 } },
+    { text: "The crew finds an ice pocket.", note: "+1 oxygen", delta: { oxygen: 1 } },
+    { text: "A micrometeorite chips a solar panel.", note: "−1 energy", delta: { energy: -1 } },
+    { text: "The crew shares a morale-boosting meal.", note: "−1 food", delta: { food: -1 } }
+  ];
+
+  const moonState = {
+    playing: false,
+    locked: false,
+    awaitingNext: false,
+    sol: 0,
+    resources: { oxygen: 6, food: 6, energy: 6 },
+    log: []
+  };
+
+  function moonClamp(value) {
+    return Math.max(0, Math.min(12, value));
+  }
+
+  function moonApplyDelta(delta) {
+    moonResourcesList.forEach((key) => {
+      moonState.resources[key] = moonClamp(moonState.resources[key] + Number(delta[key] || 0));
+    });
+  }
+
+  function renderMoonResources() {
+    moonResourcesList.forEach((key) => {
+      const value = moonState.resources[key];
+      const refs = moonResourceEls[key];
+      refs.value.textContent = String(value);
+      refs.bar.style.width = `${(value / 12) * 100}%`;
+      refs.card.classList.toggle("is-low", value <= 2);
+    });
+  }
+
+  function renderMoonLog() {
+    const entries = moonState.log.slice(-4);
+    moonLog.innerHTML = entries.length
+      ? entries.map((entry) => `<p class="${entry.type}">${esc(entry.text)}</p>`).join("")
+      : "Choose an action to begin Sol 1.";
+  }
+
+  function renderMoonActions() {
+    moonActions.innerHTML = moonActionsList.map((action) => `
+      <button class="moon-action" type="button" data-action="${action.id}">
+        <strong>${action.label}</strong>
+        <small>${action.note}</small>
+      </button>
+    `).join("");
+    $$(".moon-action", moonActions).forEach((button) => {
+      button.addEventListener("click", () => chooseMoonAction(button.dataset.action));
+    });
+  }
+
+  function startMoonGame() {
+    Object.assign(moonState, {
+      playing: true,
+      locked: false,
+      awaitingNext: false,
+      sol: 0,
+      resources: { oxygen: 6, food: 6, energy: 6 },
+      log: []
+    });
+    moonSol.textContent = "Sol 1 / 8";
+    moonStart.textContent = "Restart mission";
+    moonNext.hidden = true;
+    moonReview.hidden = true;
+    moonReview.innerHTML = "";
+    moonStatus.textContent = "Choose one action for Sol 1.";
+    moonStatus.className = "game-status";
+    renderMoonResources();
+    renderMoonLog();
+    renderMoonActions();
+  }
+
+  function chooseMoonAction(actionId) {
+    if (!moonState.playing || moonState.locked) return;
+    const action = moonActionsList.find((entry) => entry.id === actionId);
+    if (!action) return;
+    moonState.locked = true;
+    const solNumber = moonState.sol + 1;
+
+    moonApplyDelta(action.delta);
+    moonState.log.push({ type: "log-action", text: `Sol ${solNumber}: ${action.label} (${action.note}).` });
+
+    const event = moonEvents[Math.floor(Math.random() * moonEvents.length)];
+    moonApplyDelta(event.delta);
+    moonState.log.push({ type: "log-event", text: `Event: ${event.text} ${event.note}.` });
+    moonState.awaitingNext = true;
+
+    renderMoonResources();
+    $$(".moon-action", moonActions).forEach((button) => {
+      button.disabled = true;
+      if (button.dataset.action === action.id) button.classList.add("is-chosen");
+    });
+
+    const lost = moonResourcesList.some((key) => moonState.resources[key] <= 0);
+    if (lost) {
+      finishMoonGame(false);
+      return;
+    }
+    if (moonState.sol >= 7) {
+      finishMoonGame(true);
+      return;
+    }
+
+    moonNext.hidden = false;
+    moonStatus.textContent = "Action logged. Review the event, then continue.";
+    moonStatus.className = "game-status good";
+    renderMoonLog();
+  }
+
+  function advanceMoon() {
+    if (!moonState.playing || !moonState.awaitingNext) return;
+    moonState.sol += 1;
+    moonState.awaitingNext = false;
+    moonState.locked = false;
+    moonNext.hidden = true;
+    moonSol.textContent = `Sol ${moonState.sol + 1} / 8`;
+    moonStatus.textContent = `Choose one action for Sol ${moonState.sol + 1}.`;
+    moonStatus.className = "game-status";
+    renderMoonActions();
+  }
+
+  function finishMoonGame(success) {
+    moonState.playing = false;
+    moonState.locked = true;
+    moonState.awaitingNext = false;
+    moonNext.hidden = true;
+    moonStart.textContent = "Play again";
+    $$(".moon-action", moonActions).forEach((button) => { button.disabled = true; });
+
+    const survived = success ? 8 : moonState.sol + 1;
+    const supplies = moonState.resources.oxygen + moonState.resources.food + moonState.resources.energy;
+    const score = survived * 10 + supplies;
+    const title = success ? "Mission complete" : `Base lost on Sol ${survived}`;
+
+    moonSol.textContent = `Sol ${survived} / 8`;
+    moonState.log.push({
+      type: success ? "log-action" : "log-alert",
+      text: success ? "Mission complete: the base survived all eight sols." : `Base lost on Sol ${survived}.`
+    });
+    renderMoonResources();
+    renderMoonLog();
+
+    moonStatus.textContent = success
+      ? `Mission complete! The crew survived all eight sols with a score of ${score}.`
+      : `A critical supply ran out on Sol ${survived}. Mission score: ${score}.`;
+    moonStatus.className = success ? "game-status win" : "game-status";
+    moonReview.hidden = false;
+    moonReview.innerHTML = `
+      <h4>Mission report</h4>
+      <div class="logic-review-list">
+        <div class="logic-review-row ${success ? "is-correct" : "is-wrong"}">
+          <span class="logic-review-num">${success ? "✓" : "!"}</span>
+          <div>
+            <strong>${title}</strong>
+            <span>Final supplies — oxygen ${moonState.resources.oxygen}, food ${moonState.resources.food}, energy ${moonState.resources.energy}. Score: ${score}. ${success ? "Your resource planning kept the colony alive." : "Watch the lowest supply and replenish it before it empties."}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  moonStart.addEventListener("click", startMoonGame);
+  moonNext.addEventListener("click", advanceMoon);
+
+
+  /* ---------- Game 8: Riddle & Trivia ---------- */
+
+  const riddleRiddles = [
+    { type: "Riddle", prompt: "What has keys but can't open locks?", choices: ["A piano", "A map", "A clock", "A book"], answer: "A piano", explanation: "A piano has keys you press, not keys for locks." },
+    { type: "Riddle", prompt: "What has hands but can't clap?", choices: ["A clock", "A river", "A chair", "A candle"], answer: "A clock", explanation: "A clock's hands point to the time." },
+    { type: "Riddle", prompt: "What gets wetter the more it dries?", choices: ["A towel", "A sponge", "A cloud", "A mirror"], answer: "A towel", explanation: "A towel absorbs water as it dries things." },
+    { type: "Riddle", prompt: "What has many teeth but never bites?", choices: ["A comb", "A saw", "A zipper", "A fork"], answer: "A comb", explanation: "A comb's teeth are for hair, not biting." },
+    { type: "Riddle", prompt: "What has a head, a tail, but no body?", choices: ["A coin", "A snake", "A kite", "A pencil"], answer: "A coin", explanation: "A coin has heads and tails." },
+    { type: "Riddle", prompt: "What has one eye but cannot see?", choices: ["A needle", "A potato", "A camera", "A storm"], answer: "A needle", explanation: "A needle has an eye for thread." },
+    { type: "Riddle", prompt: "What can travel around the world while staying in a corner?", choices: ["A stamp", "A map", "A clock", "A mirror"], answer: "A stamp", explanation: "A stamp travels on mail from its corner." },
+    { type: "Riddle", prompt: "What has legs but doesn't walk?", choices: ["A table", "A spider", "A bird", "A robot"], answer: "A table", explanation: "A table has legs that hold it up." },
+    { type: "Riddle", prompt: "What goes up but never comes down?", choices: ["Your age", "A balloon", "A rocket", "A kite"], answer: "Your age", explanation: "Your age only increases." },
+    { type: "Riddle", prompt: "What has words but never speaks?", choices: ["A book", "A radio", "A parrot", "A phone"], answer: "A book", explanation: "A book uses words without a voice." },
+    { type: "Riddle", prompt: "What has a neck but no head?", choices: ["A bottle", "A giraffe", "A shirt", "A guitar"], answer: "A bottle", explanation: "A bottle has a neck but no head." },
+    { type: "Riddle", prompt: "What is full of holes but still holds water?", choices: ["A sponge", "A net", "A basket", "A sieve"], answer: "A sponge", explanation: "A sponge is porous but absorbs water." }
+  ];
+
+  const riddleTrivia = [
+    { type: "Trivia", prompt: "Which planet is known as the Red Planet?", choices: ["Mars", "Venus", "Jupiter", "Mercury"], answer: "Mars", explanation: "Mars looks red because of iron oxide in its soil." },
+    { type: "Trivia", prompt: "What is the capital of the Philippines?", choices: ["Manila", "Cebu", "Davao", "Baguio"], answer: "Manila", explanation: "Manila is the capital city of the Philippines." },
+    { type: "Trivia", prompt: "Who wrote Noli Me Tangere?", choices: ["Jose Rizal", "Andres Bonifacio", "Emilio Aguinaldo", "Lope K. Santos"], answer: "Jose Rizal", explanation: "Jose Rizal wrote the novel Noli Me Tangere." },
+    { type: "Trivia", prompt: "What is the largest ocean on Earth?", choices: ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"], answer: "Pacific Ocean", explanation: "The Pacific is the largest and deepest ocean." },
+    { type: "Trivia", prompt: "How many continents are there?", choices: ["7", "5", "6", "8"], answer: "7", explanation: "There are seven continents." },
+    { type: "Trivia", prompt: "What is H2O?", choices: ["Water", "Salt", "Sugar", "Oxygen"], answer: "Water", explanation: "H2O is the chemical formula for water." },
+    { type: "Trivia", prompt: "Which is the fastest land animal?", choices: ["Cheetah", "Lion", "Horse", "Gazelle"], answer: "Cheetah", explanation: "A cheetah can sprint faster than any other land animal." },
+    { type: "Trivia", prompt: "What is the national bird of the Philippines?", choices: ["Philippine eagle", "Maya", "Parrot", "Dove"], answer: "Philippine eagle", explanation: "The Philippine eagle is the country's national bird." },
+    { type: "Trivia", prompt: "Which ancient civilization is credited with inventing paper?", choices: ["China", "Egypt", "Greece", "Rome"], answer: "China", explanation: "Papermaking was developed in ancient China." },
+    { type: "Trivia", prompt: "What is the longest river in the world?", choices: ["Nile", "Amazon", "Yangtze", "Mississippi"], answer: "Nile", explanation: "The Nile is traditionally considered the longest river." },
+    { type: "Trivia", prompt: "Which is the largest planet in our solar system?", choices: ["Jupiter", "Saturn", "Neptune", "Earth"], answer: "Jupiter", explanation: "Jupiter is the largest planet in the solar system." },
+    { type: "Trivia", prompt: "What does ASEAN stand for?", choices: ["Association of Southeast Asian Nations", "Asian Sports and Education Network", "Alliance of South East African Nations", "Association of Southern European and Asian Nations"], answer: "Association of Southeast Asian Nations", explanation: "ASEAN is the Association of Southeast Asian Nations." }
+  ];
+
+  const riddleType = $("#riddle-type");
+  const riddleProgress = $("#riddle-progress");
+  const riddlePrompt = $("#riddle-prompt");
+  const riddleOptions = $("#riddle-options");
+  const riddleScore = $("#riddle-score");
+  const riddleFeedback = $("#riddle-feedback");
+  const riddleStart = $("#riddle-start");
+  const riddleNext = $("#riddle-next");
+  const riddleReview = $("#riddle-review");
+
+  const riddleState = {
+    playing: false,
+    locked: false,
+    answered: false,
+    round: 0,
+    score: 0,
+    questions: []
+  };
+
+  function startRiddleGame() {
+    const questions = shuffle([
+      ...shuffle(riddleRiddles).slice(0, 5),
+      ...shuffle(riddleTrivia).slice(0, 5)
+    ]).map((question) => {
+      const choices = shuffle([...question.choices]);
+      return { ...question, choices, answerIndex: choices.indexOf(question.answer), chosen: null };
+    });
+    Object.assign(riddleState, { playing: true, locked: false, answered: false, round: 0, score: 0, questions });
+    riddleScore.textContent = "0 / 10";
+    riddleStart.textContent = "Restart challenge";
+    riddleReview.hidden = true;
+    riddleReview.innerHTML = "";
+    riddleType.textContent = "Ready";
+    riddleType.classList.remove("is-trivia");
+    renderRiddleQuestion();
+  }
+
+  function renderRiddleQuestion() {
+    const question = riddleState.questions[riddleState.round];
+    if (!question) return;
+    riddleState.locked = false;
+    riddleState.answered = false;
+    riddleType.textContent = question.type;
+    riddleType.classList.toggle("is-trivia", question.type === "Trivia");
+    riddleProgress.textContent = `Challenge ${riddleState.round + 1} of 10`;
+    riddlePrompt.textContent = question.prompt;
+    riddleOptions.innerHTML = question.choices.map((choice, index) => `
+      <button class="logic-option" type="button" data-index="${index}">${esc(choice)}</button>
+    `).join("");
+    $$(".logic-option", riddleOptions).forEach((button) => {
+      button.addEventListener("click", () => chooseRiddle(Number(button.dataset.index)));
+    });
+    riddleNext.hidden = true;
+    riddleFeedback.textContent = question.type === "Riddle" ? "Think sideways." : "Choose the best answer.";
+    riddleFeedback.className = "logic-feedback";
+  }
+
+  function chooseRiddle(index) {
+    if (!riddleState.playing || riddleState.locked) return;
+    riddleState.locked = true;
+    riddleState.answered = true;
+    const question = riddleState.questions[riddleState.round];
+    const correct = index === question.answerIndex;
+    question.chosen = index;
+    if (correct) riddleState.score += 1;
+    riddleScore.textContent = `${riddleState.score} / 10`;
+    $$(".logic-option", riddleOptions).forEach((button, buttonIndex) => {
+      button.disabled = true;
+      if (buttonIndex === question.answerIndex) button.classList.add("is-correct");
+      if (buttonIndex === index && !correct) button.classList.add("is-wrong");
+    });
+    riddleFeedback.textContent = correct
+      ? `Correct! ${question.explanation}`
+      : `Not quite. ${question.explanation}`;
+    riddleFeedback.className = `logic-feedback ${correct ? "is-good" : "is-bad"}`;
+    riddleNext.hidden = false;
+    riddleNext.textContent = riddleState.round === riddleState.questions.length - 1 ? "See answers →" : "Next challenge →";
+  }
+
+  function advanceRiddle() {
+    if (!riddleState.playing || !riddleState.answered) return;
+    if (riddleState.round >= riddleState.questions.length - 1) {
+      finishRiddleGame();
+      return;
+    }
+    riddleState.round += 1;
+    renderRiddleQuestion();
+  }
+
+  function finishRiddleGame() {
+    riddleState.playing = false;
+    riddleState.locked = true;
+    riddleState.answered = false;
+    riddleOptions.innerHTML = "";
+    riddleNext.hidden = true;
+    riddleStart.textContent = "Play again";
+    riddleType.textContent = "Complete";
+    riddleType.classList.remove("is-trivia");
+    riddleProgress.textContent = "10 of 10 solved";
+    riddlePrompt.textContent = "All 10 challenges completed.";
+    const message = riddleState.score >= 8
+      ? "Riddle and trivia master!"
+      : riddleState.score >= 5
+        ? "Sharp mind!"
+        : "Every riddle teaches you a new way to think.";
+    riddleFeedback.textContent = `${message} You answered ${riddleState.score} of 10 correctly.`;
+    riddleFeedback.className = riddleState.score >= 8 ? "logic-feedback is-good" : "logic-feedback";
+    riddleReview.hidden = false;
+    riddleReview.innerHTML = `
+      <h4>Riddle &amp; trivia answers</h4>
+      <div class="logic-review-list">
+        ${riddleState.questions.map((question, index) => {
+          const chosen = question.chosen === null ? "—" : question.choices[question.chosen];
+          const correct = question.chosen === question.answerIndex;
+          return `
+            <div class="logic-review-row ${correct ? "is-correct" : "is-wrong"}">
+              <span class="logic-review-num">${index + 1}</span>
+              <div>
+                <strong>${question.type}: ${esc(question.prompt)}</strong>
+                <span>Answer: ${esc(question.answer)}. ${esc(question.explanation)} Your answer: ${esc(chosen)}.</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  riddleStart.addEventListener("click", startRiddleGame);
+  riddleNext.addEventListener("click", advanceRiddle);
+
+
+  /* ---------- Game 9: Guess the Capital ---------- */
+
+  const capitalCountries = [
+    { code: "ph", name: "Philippines", capital: "Manila" },
+    { code: "jp", name: "Japan", capital: "Tokyo" },
+    { code: "kr", name: "South Korea", capital: "Seoul" },
+    { code: "cn", name: "China", capital: "Beijing" },
+    { code: "in", name: "India", capital: "New Delhi" },
+    { code: "th", name: "Thailand", capital: "Bangkok" },
+    { code: "vn", name: "Vietnam", capital: "Hanoi" },
+    { code: "id", name: "Indonesia", capital: "Jakarta" },
+    { code: "my", name: "Malaysia", capital: "Kuala Lumpur" },
+    { code: "au", name: "Australia", capital: "Canberra" },
+    { code: "nz", name: "New Zealand", capital: "Wellington" },
+    { code: "us", name: "United States", capital: "Washington, D.C." },
+    { code: "ca", name: "Canada", capital: "Ottawa" },
+    { code: "mx", name: "Mexico", capital: "Mexico City" },
+    { code: "br", name: "Brazil", capital: "Brasília" },
+    { code: "ar", name: "Argentina", capital: "Buenos Aires" },
+    { code: "gb", name: "United Kingdom", capital: "London" },
+    { code: "fr", name: "France", capital: "Paris" },
+    { code: "de", name: "Germany", capital: "Berlin" },
+    { code: "it", name: "Italy", capital: "Rome" },
+    { code: "es", name: "Spain", capital: "Madrid" },
+    { code: "pt", name: "Portugal", capital: "Lisbon" },
+    { code: "nl", name: "Netherlands", capital: "Amsterdam" },
+    { code: "se", name: "Sweden", capital: "Stockholm" },
+    { code: "no", name: "Norway", capital: "Oslo" },
+    { code: "ch", name: "Switzerland", capital: "Bern" },
+    { code: "gr", name: "Greece", capital: "Athens" },
+    { code: "tr", name: "Turkey", capital: "Ankara" },
+    { code: "eg", name: "Egypt", capital: "Cairo" },
+    { code: "za", name: "South Africa", capital: "Pretoria" },
+    { code: "ke", name: "Kenya", capital: "Nairobi" },
+    { code: "ng", name: "Nigeria", capital: "Abuja" },
+    { code: "sa", name: "Saudi Arabia", capital: "Riyadh" },
+    { code: "ae", name: "United Arab Emirates", capital: "Abu Dhabi" },
+    { code: "ru", name: "Russia", capital: "Moscow" },
+    { code: "ua", name: "Ukraine", capital: "Kyiv" },
+    { code: "pl", name: "Poland", capital: "Warsaw" },
+    { code: "ie", name: "Ireland", capital: "Dublin" },
+    { code: "at", name: "Austria", capital: "Vienna" },
+    { code: "dk", name: "Denmark", capital: "Copenhagen" },
+    { code: "fi", name: "Finland", capital: "Helsinki" },
+    { code: "is", name: "Iceland", capital: "Reykjavík" },
+    { code: "be", name: "Belgium", capital: "Brussels" },
+    { code: "ma", name: "Morocco", capital: "Rabat" },
+    { code: "pe", name: "Peru", capital: "Lima" },
+    { code: "cl", name: "Chile", capital: "Santiago" },
+    { code: "co", name: "Colombia", capital: "Bogotá" },
+    { code: "cu", name: "Cuba", capital: "Havana" },
+    { code: "jm", name: "Jamaica", capital: "Kingston" },
+    { code: "gh", name: "Ghana", capital: "Accra" },
+    { code: "et", name: "Ethiopia", capital: "Addis Ababa" },
+    { code: "pk", name: "Pakistan", capital: "Islamabad" },
+    { code: "bd", name: "Bangladesh", capital: "Dhaka" },
+    { code: "np", name: "Nepal", capital: "Kathmandu" },
+    { code: "kh", name: "Cambodia", capital: "Phnom Penh" },
+    { code: "mm", name: "Myanmar", capital: "Naypyidaw" },
+    { code: "mn", name: "Mongolia", capital: "Ulaanbaatar" },
+    { code: "lk", name: "Sri Lanka", capital: "Sri Jayawardenepura Kotte" }
+  ];
+
+  const capitalImage = $("#capital-image");
+  const capitalPlaceholder = $("#capital-placeholder");
+  const capitalCountry = $("#capital-country");
+  const capitalProgress = $("#capital-progress");
+  const capitalOptions = $("#capital-options");
+  const capitalScore = $("#capital-score");
+  const capitalFeedback = $("#capital-feedback");
+  const capitalStart = $("#capital-start");
+  const capitalNext = $("#capital-next");
+  const capitalReview = $("#capital-review");
+
+  const capitalState = {
+    playing: false,
+    locked: false,
+    answered: false,
+    round: 0,
+    score: 0,
+    questions: []
+  };
+
+  function startCapitalGame() {
+    const questions = shuffle(capitalCountries).slice(0, 10).map((country) => {
+      const distractors = shuffle(capitalCountries.filter((entry) => entry.capital !== country.capital)).slice(0, 3);
+      const choices = shuffle([country.capital, ...distractors.map((entry) => entry.capital)]);
+      return { country, choices, answerIndex: choices.indexOf(country.capital), chosen: null };
+    });
+    Object.assign(capitalState, { playing: true, locked: false, answered: false, round: 0, score: 0, questions });
+    capitalScore.textContent = "0 / 10";
+    capitalStart.textContent = "Restart challenge";
+    capitalReview.hidden = true;
+    capitalReview.innerHTML = "";
+    renderCapitalQuestion();
+  }
+
+  function renderCapitalQuestion() {
+    const question = capitalState.questions[capitalState.round];
+    if (!question) return;
+    capitalState.locked = false;
+    capitalState.answered = false;
+    capitalImage.src = flagUrl(question.country.code);
+    capitalImage.alt = `Flag of ${question.country.name}`;
+    capitalImage.hidden = false;
+    capitalPlaceholder.hidden = true;
+    capitalCountry.textContent = question.country.name;
+    capitalProgress.textContent = `Country ${capitalState.round + 1} of 10`;
+    capitalOptions.innerHTML = question.choices.map((choice, index) => `
+      <button class="logic-option" type="button" data-index="${index}">${esc(choice)}</button>
+    `).join("");
+    $$(".logic-option", capitalOptions).forEach((button) => {
+      button.addEventListener("click", () => chooseCapital(Number(button.dataset.index)));
+    });
+    capitalNext.hidden = true;
+    capitalFeedback.textContent = "Choose the capital city of this country.";
+    capitalFeedback.className = "logic-feedback";
+  }
+
+  function chooseCapital(index) {
+    if (!capitalState.playing || capitalState.locked) return;
+    capitalState.locked = true;
+    capitalState.answered = true;
+    const question = capitalState.questions[capitalState.round];
+    const correct = index === question.answerIndex;
+    question.chosen = index;
+    if (correct) capitalState.score += 1;
+    capitalScore.textContent = `${capitalState.score} / 10`;
+    $$(".logic-option", capitalOptions).forEach((button, buttonIndex) => {
+      button.disabled = true;
+      if (buttonIndex === question.answerIndex) button.classList.add("is-correct");
+      if (buttonIndex === index && !correct) button.classList.add("is-wrong");
+    });
+    capitalFeedback.textContent = correct
+      ? `Correct! ${question.country.capital} is the capital of ${question.country.name}.`
+      : `Not quite. The capital of ${question.country.name} is ${question.country.capital}.`;
+    capitalFeedback.className = `logic-feedback ${correct ? "is-good" : "is-bad"}`;
+    capitalNext.hidden = false;
+    capitalNext.textContent = capitalState.round === capitalState.questions.length - 1 ? "See answers →" : "Next country →";
+  }
+
+  function advanceCapital() {
+    if (!capitalState.playing || !capitalState.answered) return;
+    if (capitalState.round >= capitalState.questions.length - 1) {
+      finishCapitalGame();
+      return;
+    }
+    capitalState.round += 1;
+    renderCapitalQuestion();
+  }
+
+  function finishCapitalGame() {
+    capitalState.playing = false;
+    capitalState.locked = true;
+    capitalState.answered = false;
+    capitalOptions.innerHTML = "";
+    capitalNext.hidden = true;
+    capitalImage.hidden = true;
+    capitalPlaceholder.hidden = false;
+    capitalPlaceholder.innerHTML = '<span aria-hidden="true">🌍</span><small>All 10 countries</small>';
+    capitalCountry.textContent = "World tour complete";
+    capitalProgress.textContent = `You named ${capitalState.score} of 10 capitals`;
+    capitalStart.textContent = "Play again";
+    const message = capitalState.score >= 8
+      ? "Capital expert!"
+      : capitalState.score >= 5
+        ? "Good exploring!"
+        : "Every capital is a new place on the map.";
+    capitalFeedback.textContent = `${message} You got ${capitalState.score} of 10. The correct answers are below.`;
+    capitalFeedback.className = capitalState.score >= 8 ? "logic-feedback is-good" : "logic-feedback";
+    capitalReview.hidden = false;
+    capitalReview.innerHTML = `
+      <h4>Capital answers</h4>
+      <div class="logic-review-list">
+        ${capitalState.questions.map((question, index) => {
+          const chosen = question.chosen === null ? "—" : question.choices[question.chosen];
+          const correct = question.chosen === question.answerIndex;
+          return `
+            <div class="logic-review-row ${correct ? "is-correct" : "is-wrong"}">
+              <img class="capital-review-flag" src="${flagUrl(question.country.code, 80)}" alt="${esc(question.country.name)} flag" width="32" height="22" loading="lazy" decoding="async" />
+              <span class="logic-review-num">${index + 1}</span>
+              <div>
+                <strong>${esc(question.country.name)} — ${esc(question.country.capital)}</strong>
+                <span>Your answer: ${esc(chosen)} ${correct ? "✓" : "✕"}</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  capitalStart.addEventListener("click", startCapitalGame);
+  capitalNext.addEventListener("click", advanceCapital);
+
+
   /* ---------- Flying unicorn orbit ---------- */
 
   const orbitHost = $(".title-orbit");

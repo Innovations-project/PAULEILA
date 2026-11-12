@@ -176,7 +176,7 @@
       </div>
       <dl class="hero-stats">
         <div><dt>Jokes</dt><dd>50</dd></div>
-        <div><dt>Mini games</dt><dd>3</dd></div>
+        <div><dt>Mini games</dt><dd>9</dd></div>
         <div><dt>Wisdom</dt><dd>∞</dd></div>
         <div><dt>Books</dt><dd>10</dd></div>
       </dl>
@@ -250,8 +250,8 @@
     <div class="panel-head">
       <div>
         <p class="eyebrow">Quick girl games</p>
-        <h2>Three Tiny Brain Games</h2>
-        <p class="lede">No downloads, no waiting. Just three fast games for a sharp mind — match, sprint, and unscramble.</p>
+        <h2>Nine Tiny Brain Games</h2>
+        <p class="lede">No downloads, no waiting. Nine fast games for a sharp mind — memory, math, words, flags, capitals, logic, riddles, trivia, and a moonbase to run.</p>
       </div>
     </div>
 
@@ -314,6 +314,182 @@
         </article>
       </div>
     </div>
+
+      <article class="game-card flag-game-card">
+        <div class="game-top">
+          <div>
+            <h3>Flag Detective</h3>
+            <p>Ten mystery flags. Guess the country, then see every answer at the end.</p>
+          </div>
+          <span class="score-chip" id="flag-score">0 / 10</span>
+        </div>
+
+        <div class="flag-play-layout">
+          <div class="flag-visual">
+            <div class="flag-frame" id="flag-frame">
+              <img class="flag-image" id="flag-image" alt="Mystery flag" hidden />
+              <div class="flag-placeholder" id="flag-placeholder">
+                <span aria-hidden="true">?</span>
+                <small>Mystery flag</small>
+              </div>
+            </div>
+            <p class="flag-progress" id="flag-progress">10 flags · 4 choices each</p>
+          </div>
+
+          <div class="flag-controls">
+            <div class="flag-options" id="flag-options"></div>
+            <div class="game-actions">
+              <button class="btn btn-primary" id="flag-start" type="button">Start flag challenge</button>
+            </div>
+            <p class="game-status" id="flag-status" aria-live="polite">Tap start, then choose the country for each flag.</p>
+          </div>
+        </div>
+
+        <div class="flag-review" id="flag-review" hidden></div>
+      </article>
+
+    <div class="logic-games-grid">
+      <article class="game-card logic-card">
+        <div class="game-top">
+          <div>
+            <h3>Pattern Path</h3>
+            <p>Find the rule and choose the number that comes next.</p>
+          </div>
+          <span class="score-chip" id="pattern-score">0 / 8</span>
+        </div>
+        <div class="pattern-sequence" id="pattern-sequence"><span class="logic-idle">Tap start to reveal the first pattern.</span></div>
+        <p class="logic-progress" id="pattern-progress">8 puzzles · one missing number</p>
+        <div class="pattern-options" id="pattern-options"></div>
+        <p class="logic-feedback" id="pattern-feedback" aria-live="polite">Find the rule and choose what comes next.</p>
+        <div class="game-actions">
+          <button class="btn btn-primary" id="pattern-start" type="button">Start pattern puzzles</button>
+          <button class="btn btn-ghost" id="pattern-next" type="button" hidden>Next puzzle →</button>
+        </div>
+        <div class="logic-review" id="pattern-review" hidden></div>
+      </article>
+
+      <article class="game-card logic-card">
+        <div class="game-top">
+          <div>
+            <h3>Odd One Out</h3>
+            <p>Three belong together. One is the impostor.</p>
+          </div>
+          <span class="score-chip" id="odd-score">0 / 8</span>
+        </div>
+        <p class="odd-prompt" id="odd-prompt">Which one doesn't belong?</p>
+        <p class="logic-progress" id="odd-progress">8 puzzles · one odd item</p>
+        <div class="odd-options" id="odd-options"></div>
+        <p class="logic-feedback" id="odd-feedback" aria-live="polite">Tap start, then choose the item that breaks the pattern.</p>
+        <div class="game-actions">
+          <button class="btn btn-primary" id="odd-start" type="button">Start odd-one-out</button>
+          <button class="btn btn-ghost" id="odd-next" type="button" hidden>Next puzzle →</button>
+        </div>
+        <div class="logic-review" id="odd-review" hidden></div>
+      </article>
+    </div>
+
+    <div class="extra-games-grid">
+      <article class="game-card strategy-game-card">
+        <div class="game-top">
+          <div>
+            <h3>Moonbase Manager</h3>
+            <p>Balance oxygen, food, and energy for eight sols. One empty tank ends the mission.</p>
+          </div>
+          <span class="score-chip" id="moon-sol">Sol 1 / 8</span>
+        </div>
+
+        <div class="moon-dashboard">
+          <div class="moon-resource" id="moon-oxygen-card">
+            <div class="moon-resource-top"><span>Oxygen</span><strong id="moon-oxygen">6</strong></div>
+            <div class="moon-meter"><span id="moon-oxygen-bar" style="width:50%"></span></div>
+          </div>
+          <div class="moon-resource" id="moon-food-card">
+            <div class="moon-resource-top"><span>Food</span><strong id="moon-food">6</strong></div>
+            <div class="moon-meter"><span id="moon-food-bar" style="width:50%"></span></div>
+          </div>
+          <div class="moon-resource" id="moon-energy-card">
+            <div class="moon-resource-top"><span>Energy</span><strong id="moon-energy">6</strong></div>
+            <div class="moon-meter"><span id="moon-energy-bar" style="width:50%"></span></div>
+          </div>
+        </div>
+
+        <div class="moon-log-wrap">
+          <p class="moon-log-label">Mission log</p>
+          <div class="moon-log" id="moon-log" aria-live="polite">Start the mission and choose your first action.</div>
+        </div>
+
+        <div class="moon-actions" id="moon-actions"></div>
+
+        <div class="game-actions">
+          <button class="btn btn-primary" id="moon-start" type="button">Start mission</button>
+          <button class="btn btn-ghost" id="moon-next" type="button" hidden>Next sol →</button>
+        </div>
+        <p class="game-status" id="moon-status" aria-live="polite">Keep all three supplies above zero to survive.</p>
+        <div class="logic-review" id="moon-review" hidden></div>
+      </article>
+
+      <article class="game-card riddle-game-card">
+        <div class="game-top">
+          <div>
+            <h3>Riddle &amp; Trivia</h3>
+            <p>Five riddles, five trivia questions, and one curious brain.</p>
+          </div>
+          <span class="score-chip" id="riddle-score">0 / 10</span>
+        </div>
+
+        <div class="riddle-meta">
+          <span class="riddle-type" id="riddle-type">Ready</span>
+          <span class="logic-progress" id="riddle-progress">10 challenges · mixed</span>
+        </div>
+        <p class="riddle-prompt" id="riddle-prompt">Tap start to begin.</p>
+        <div class="riddle-options" id="riddle-options"></div>
+        <p class="logic-feedback" id="riddle-feedback" aria-live="polite">Solve the riddle or answer the trivia question.</p>
+
+        <div class="game-actions">
+          <button class="btn btn-primary" id="riddle-start" type="button">Start riddles &amp; trivia</button>
+          <button class="btn btn-ghost" id="riddle-next" type="button" hidden>Next challenge →</button>
+        </div>
+        <div class="logic-review" id="riddle-review" hidden></div>
+      </article>
+    </div>
+
+    <article class="game-card capital-game-card">
+      <div class="game-top">
+        <div>
+          <h3>Guess the Capital</h3>
+          <p>Ten random countries. Read the flag and country name, then choose the capital city.</p>
+        </div>
+        <span class="score-chip" id="capital-score">0 / 10</span>
+      </div>
+
+      <div class="flag-play-layout">
+        <div class="flag-visual">
+          <div class="flag-frame">
+            <img class="flag-image" id="capital-image" alt="Country flag" hidden />
+            <div class="flag-placeholder" id="capital-placeholder">
+              <span aria-hidden="true">🌍</span>
+              <small>Mystery capital</small>
+            </div>
+          </div>
+          <p class="flag-progress" id="capital-progress">10 countries · 4 capitals each</p>
+        </div>
+
+        <div class="flag-controls">
+          <div class="capital-country">
+            <p class="capital-country-label">Country</p>
+            <h4 id="capital-country">Ready to explore?</h4>
+          </div>
+          <div class="capital-options" id="capital-options"></div>
+          <p class="logic-feedback" id="capital-feedback" aria-live="polite">Start the challenge, then choose the correct capital city.</p>
+          <div class="game-actions">
+            <button class="btn btn-primary" id="capital-start" type="button">Start capital challenge</button>
+            <button class="btn btn-ghost" id="capital-next" type="button" hidden>Next country →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="logic-review" id="capital-review" hidden></div>
+    </article>
   </section>
 
   <!-- WORD OF THE DAY -->
