@@ -717,30 +717,38 @@
   const wisdomReset = $("#wisdom-reset");
 
   const wisdomFortunes = [
-    { text: "You are enough.", note: "Exactly as you are, right now." },
-    { text: "Small steps are still steps.", note: "Keep going, lovely." },
-    { text: "Your kindness is magic.", note: "The world feels it." },
-    { text: "Brave looks good on you.", note: "Do the thing anyway." },
-    { text: "You make the world softer.", note: "That is a rare gift." },
-    { text: "Curiosity is your superpower.", note: "Ask the next question." },
-    { text: "You are allowed to shine.", note: "No shrinking today." },
-    { text: "Today is yours.", note: "Take it one small joy at a time." },
-    { text: "You’ve got this.", note: "Even on the wobbly days." },
-    { text: "Your smile is a little sunrise.", note: "Someone needed it today." },
-    { text: "Be proud of your progress.", note: "You came a long way." },
-    { text: "A gentle heart is a strong heart.", note: "Softness is courage too." },
-    { text: "You are wonderfully made.", note: "Every little detail." },
-    { text: "Good things are growing.", note: "Even when you cannot see them yet." },
-    { text: "Take up space.", note: "Your voice belongs here." },
-    { text: "Your voice matters.", note: "Say the true thing." },
-    { text: "Rest is part of the plan.", note: "You do not have to earn it." },
-    { text: "You are loved, exactly as you are.", note: "No edits needed." },
-    { text: "The world needs your sparkle.", note: "Shine in your own way." },
-    { text: "You are doing better than you think.", note: "Be kind to yourself." },
-    { text: "Choose wonder.", note: "There is magic in noticing." },
-    { text: "You can do hard things.", note: "One brave minute at a time." },
-    { text: "Your light is not too much.", note: "Let it glow." },
-    { text: "You belong here.", note: "This little universe is yours." }
+    { theme: "Overcoming challenges", text: "You have survived every hard day so far.", note: "That is proof, not luck." },
+    { theme: "Overcoming challenges", text: "Storms can bend you without breaking you.", note: "Keep standing." },
+    { theme: "Overcoming challenges", text: "This obstacle is a chapter, not the whole story.", note: "Turn the page." },
+    { theme: "Overcoming challenges", text: "You do not have to be fearless to keep going.", note: "Courage comes with the step." },
+    { theme: "Overcoming challenges", text: "The mountain looks smaller once you start climbing.", note: "Take the first step." },
+    { theme: "Overcoming challenges", text: "Hard seasons grow the deepest roots.", note: "You are growing." },
+    { theme: "Overcoming challenges", text: "You can hold hope and struggle at the same time.", note: "Both are allowed." },
+    { theme: "Overcoming challenges", text: "A setback is only a setup for a comeback.", note: "Begin again." },
+    { theme: "Overcoming challenges", text: "Your strength is not used up.", note: "There is more in you." },
+    { theme: "Overcoming challenges", text: "You have made it through 100% of your hardest days.", note: "Today is no different." },
+
+    { theme: "Taking action", text: "Start before you feel ready.", note: "Ready is made by starting." },
+    { theme: "Taking action", text: "Small moves still change the whole picture.", note: "Do the next small thing." },
+    { theme: "Taking action", text: "A brave step is better than a perfect plan.", note: "Go on." },
+    { theme: "Taking action", text: "You do not need the whole path, just the next step.", note: "Take it." },
+    { theme: "Taking action", text: "Done is a beautiful place to begin.", note: "Make a start." },
+    { theme: "Taking action", text: "Your future is built by what you do today.", note: "Choose one action." },
+    { theme: "Taking action", text: "The first step is allowed to be small.", note: "Let it count." },
+    { theme: "Taking action", text: "Action turns a wish into a direction.", note: "Move toward it." },
+    { theme: "Taking action", text: "You can begin again at any hour.", note: "Now is a good time." },
+    { theme: "Taking action", text: "Do it scared, then watch yourself grow.", note: "Courage is a verb." },
+
+    { theme: "Self-belief", text: "You are more capable than your doubt says.", note: "Believe the evidence." },
+    { theme: "Self-belief", text: "Your voice deserves to be heard.", note: "Speak your truth." },
+    { theme: "Self-belief", text: "You are allowed to take up space.", note: "You belong here." },
+    { theme: "Self-belief", text: "There is nothing wrong with being exactly you.", note: "Stay yourself." },
+    { theme: "Self-belief", text: "You do not need to shrink to fit.", note: "Stand tall." },
+    { theme: "Self-belief", text: "Your worth is not a prize to be earned.", note: "You already have it." },
+    { theme: "Self-belief", text: "Trust the girl who keeps trying.", note: "That girl is you." },
+    { theme: "Self-belief", text: "You are enough before the achievement.", note: "And after it, too." },
+    { theme: "Self-belief", text: "Your quiet progress still counts.", note: "Be proud of it." },
+    { theme: "Self-belief", text: "You bring something no one else can.", note: "The world needs it." }
   ];
 
   let wisdomLast = -1;
@@ -771,7 +779,7 @@
     wisdomBall.setAttribute("aria-busy", "true");
     wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
     wisdomMessage.removeAttribute("aria-label");
-    wisdomHint.textContent = "The triangle is turning…";
+    wisdomHint.textContent = "The 3D pyramid is turning…";
     wisdomMessage.textContent = "…";
     wisdomSub.textContent = "Give the orb five seconds to think.";
 
@@ -787,14 +795,14 @@
       renderWisdomMessage(fortune.text);
       wisdomMessage.classList.toggle("is-long", fortune.text.length > 32);
       wisdomMessage.classList.toggle("is-longer", fortune.text.length > 46);
-      wisdomSub.textContent = fortune.note;
-      wisdomCount.textContent = wisdomReveals === 1 ? "1 wish" : `${wisdomReveals} wishes`;
+      wisdomSub.textContent = `${fortune.theme} · ${fortune.note}`;
+      wisdomCount.textContent = wisdomReveals === 1 ? "1 quote" : `${wisdomReveals} quotes`;
       wisdomBall.classList.remove("is-thinking");
       wisdomBall.classList.add("is-lit", "has-answer");
       wisdomBall.setAttribute("aria-busy", "false");
       void wisdomMessage.offsetWidth;
       wisdomMessage.classList.add("is-revealing");
-      wisdomHint.textContent = "Tap again for another little lift.";
+      wisdomHint.textContent = "Tap again for another encouraging quote.";
     }, prefersReducedMotion ? 300 : 5000);
   }
 
@@ -814,7 +822,7 @@
       wisdomMessage.removeAttribute("aria-label");
       wisdomMessage.textContent = "Tap to ask";
       wisdomSub.textContent = "Tap the 8 ball to begin.";
-      wisdomHint.textContent = "Tap the ball to shake out a little wisdom.";
+      wisdomHint.textContent = "Tap the ball for an encouraging quote.";
       wisdomCount.textContent = "";
     });
   }
