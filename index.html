@@ -552,25 +552,34 @@
           <span class="oracle-floor" aria-hidden="true"></span>
           <span class="oracle-aura" aria-hidden="true"></span>
           <button class="oracle-ball" id="wisdom-ball" type="button" aria-label="Tap the magic 8 ball for a happy thought" aria-busy="false">
+            <span class="oracle-shade" aria-hidden="true"></span>
             <span class="oracle-rim" aria-hidden="true"></span>
             <span class="oracle-gloss" aria-hidden="true"></span>
             <span class="oracle-glare" aria-hidden="true"></span>
             <span class="oracle-window">
+              <span class="oracle-dim" aria-hidden="true"></span>
               <span class="oracle-liquid" aria-hidden="true"></span>
               <span class="oracle-caustic" aria-hidden="true"></span>
-              <span class="oracle-die-wrap" aria-hidden="true">
-                <span class="oracle-die">
-                  <span class="oracle-die-face oracle-die-face-front">
-                    <span class="oracle-eight" id="wisdom-ball-text">8</span>
-                  </span>
-                  <span class="oracle-die-face oracle-die-face-right"></span>
-                  <span class="oracle-die-face oracle-die-face-back"></span>
-                  <span class="oracle-die-face oracle-die-face-left"></span>
-                </span>
+              <span class="oracle-eight" id="wisdom-ball-text">8</span>
+              <span class="oracle-blackout" aria-hidden="true"></span>
+              <span class="oracle-answer-plate" aria-hidden="true">
+                <svg class="oracle-triangle-light" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="oracle-triangle-light-gradient" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#bae6fd" />
+                      <stop offset="0.5" stop-color="#ffffff" />
+                      <stop offset="1" stop-color="#38bdf8" />
+                    </linearGradient>
+                  </defs>
+                  <path class="oracle-triangle-edge-glow" d="M3 3 L97 3 L50 97 Z" pathLength="100" />
+                  <path class="oracle-triangle-edge-light" d="M3 3 L97 3 L50 97 Z" pathLength="100" />
+                  <path class="oracle-triangle-edge-light oracle-triangle-edge-light-b" d="M3 3 L97 3 L50 97 Z" pathLength="100" />
+                </svg>
               </span>
               <span class="oracle-face">
                 <span class="oracle-message" id="wisdom-message" aria-live="polite">Tap to ask</span>
               </span>
+              <span class="oracle-flash" aria-hidden="true"></span>
             </span>
           </button>
         </div>

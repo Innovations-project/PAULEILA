@@ -775,11 +775,13 @@
 
     clearTimeout(wisdomTimer);
     wisdomBall.classList.remove("is-lit", "has-answer");
+    wisdomBall.style.setProperty("--answer-tilt", `${(Math.random() * 8 - 4).toFixed(1)}deg`);
     wisdomBall.classList.add("is-thinking");
     wisdomBall.setAttribute("aria-busy", "true");
     wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
     wisdomMessage.removeAttribute("aria-label");
-    wisdomHint.textContent = "The 3D pyramid is turning…";
+    wisdomMessage.style.removeProperty("font-size");
+    wisdomHint.textContent = "The blue mist is clearing…";
     wisdomMessage.textContent = "…";
     wisdomSub.textContent = "Give the orb five seconds to think.";
 
@@ -820,6 +822,7 @@
       wisdomBall.setAttribute("aria-busy", "false");
       wisdomMessage.classList.remove("is-long", "is-longer", "is-revealing");
       wisdomMessage.removeAttribute("aria-label");
+      wisdomMessage.style.removeProperty("font-size");
       wisdomMessage.textContent = "Tap to ask";
       wisdomSub.textContent = "Tap the 8 ball to begin.";
       wisdomHint.textContent = "Tap the ball for an encouraging quote.";
