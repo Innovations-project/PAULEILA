@@ -178,7 +178,7 @@
       </div>
       <dl class="hero-stats">
         <div><dt>Jokes</dt><dd>50</dd></div>
-        <div><dt>Mini games</dt><dd>9</dd></div>
+        <div><dt>Mini games</dt><dd>10</dd></div>
         <div><dt>Wisdom</dt><dd>∞</dd></div>
         <div><dt>Books</dt><dd>10</dd></div>
       </dl>
@@ -252,8 +252,8 @@
     <div class="panel-head">
       <div>
         <p class="eyebrow">Quick girl games</p>
-        <h2>Nine Tiny Brain Games</h2>
-        <p class="lede">No downloads, no waiting. Nine fast games for a sharp mind — memory, math, words, flags, capitals, logic, riddles, trivia, and a moonbase to run.</p>
+        <h2>Ten Tiny Brain Games</h2>
+        <p class="lede">No downloads, no waiting. Ten fast games for a sharp mind — memory, math, words, flags, capitals, logic, riddles, trivia, Bugtong, and a moonbase to run.</p>
       </div>
     </div>
 
@@ -454,6 +454,30 @@
         <div class="logic-review" id="riddle-review" hidden></div>
       </article>
     </div>
+
+    <article class="game-card bugtong-game-card">
+      <div class="game-top">
+        <div>
+          <h3>Bugtong</h3>
+          <p>Twenty traditional Filipino riddles. A fresh set each day, with six rounds before the bank cycles.</p>
+        </div>
+        <span class="score-chip" id="bugtong-score">0 / 20</span>
+      </div>
+
+      <div class="riddle-meta">
+        <span class="riddle-type" id="bugtong-type">Filipino riddle</span>
+        <span class="logic-progress" id="bugtong-progress">20 riddles · daily</span>
+      </div>
+      <p class="riddle-prompt" id="bugtong-prompt">Tap start to solve your first bugtong.</p>
+      <div class="riddle-options" id="bugtong-options"></div>
+      <p class="logic-feedback" id="bugtong-feedback" aria-live="polite">Choose the answer that fits the riddle.</p>
+
+      <div class="game-actions">
+        <button class="btn btn-primary" id="bugtong-start" type="button">Start Bugtong</button>
+        <button class="btn btn-ghost" id="bugtong-next" type="button" hidden>Next riddle →</button>
+      </div>
+      <div class="logic-review" id="bugtong-review" hidden></div>
+    </article>
 
     <article class="game-card capital-game-card">
       <div class="game-top">
@@ -817,6 +841,7 @@
 </div>
 
 <script src="quiz-data.js"></script>
+<script src="bugtong-data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

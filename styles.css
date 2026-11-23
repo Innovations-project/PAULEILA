@@ -1646,6 +1646,11 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
   .moon-resource-top strong { font-size: 1.08rem; }
 }
 
+/* Bugtong */
+
+.bugtong-game-card { margin-top: 20px; }
+.bugtong-game-card [hidden] { display: none; }
+
 /* Guess the capital */
 
 .capital-game-card { margin-top: 20px; }

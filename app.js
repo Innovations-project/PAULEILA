@@ -3667,6 +3667,165 @@ English: ${JSON.stringify(text)}`;
   capitalNext.addEventListener("click", advanceCapital);
 
 
+  /* ---------- Game 10: Bugtong ---------- */
+
+  const bugtongBank = Array.isArray(window.BUGTONG_BANK) ? window.BUGTONG_BANK : [];
+  const BUGTONG_ROUND_SIZE = 20;
+  const bugtongSeenKey = "bugtong-seen";
+
+  const bugtongType = $("#bugtong-type");
+  const bugtongProgress = $("#bugtong-progress");
+  const bugtongPrompt = $("#bugtong-prompt");
+  const bugtongOptions = $("#bugtong-options");
+  const bugtongScore = $("#bugtong-score");
+  const bugtongFeedback = $("#bugtong-feedback");
+  const bugtongStart = $("#bugtong-start");
+  const bugtongNext = $("#bugtong-next");
+  const bugtongReview = $("#bugtong-review");
+
+  const bugtongState = {
+    playing: false,
+    locked: false,
+    answered: false,
+    round: 0,
+    score: 0,
+    questions: []
+  };
+
+  function buildBugtongQuestions() {
+    const pool = bugtongBank.map((item, index) => ({ ...item, id: `bugtong:${index}` }));
+    if (pool.length < BUGTONG_ROUND_SIZE) return [];
+
+    const poolIds = new Set(pool.map((item) => item.id));
+    const saved = store.get(bugtongSeenKey, []);
+    let seen = new Set((Array.isArray(saved) ? saved : []).filter((id) => typeof id === "string" && poolIds.has(id)));
+    let available = pool.filter((item) => !seen.has(item.id));
+
+    if (available.length < BUGTONG_ROUND_SIZE) {
+      seen = new Set();
+      available = pool;
+    }
+
+    const seed = hashDate(`bugtong:${localDateKey()}`);
+    const chosen = seededShuffle(available, seed).slice(0, BUGTONG_ROUND_SIZE);
+    chosen.forEach((item) => seen.add(item.id));
+    store.set(bugtongSeenKey, [...seen]);
+
+    return chosen.map((item) => {
+      const choices = shuffle([...item.choices]);
+      return { ...item, choices, answerIndex: choices.indexOf(item.answer), chosen: null };
+    });
+  }
+
+  function startBugtongGame() {
+    const questions = buildBugtongQuestions();
+    if (!questions.length) {
+      bugtongFeedback.textContent = "The Bugtong bank is still loading. Please refresh the page.";
+      bugtongFeedback.className = "logic-feedback is-bad";
+      return;
+    }
+    Object.assign(bugtongState, { playing: true, locked: false, answered: false, round: 0, score: 0, questions });
+    bugtongScore.textContent = "0 / 20";
+    bugtongStart.textContent = "Restart Bugtong";
+    bugtongReview.hidden = true;
+    bugtongReview.innerHTML = "";
+    renderBugtongQuestion();
+  }
+
+  function renderBugtongQuestion() {
+    const question = bugtongState.questions[bugtongState.round];
+    if (!question) return;
+    bugtongState.locked = false;
+    bugtongState.answered = false;
+    bugtongType.textContent = "Bugtong";
+    bugtongType.classList.remove("is-trivia");
+    bugtongProgress.textContent = `Riddle ${bugtongState.round + 1} of 20`;
+    bugtongPrompt.textContent = question.prompt;
+    bugtongOptions.innerHTML = question.choices.map((choice, index) => `
+      <button class="logic-option" type="button" data-index="${index}">${esc(choice)}</button>
+    `).join("");
+    $$(".logic-option", bugtongOptions).forEach((button) => {
+      button.addEventListener("click", () => chooseBugtong(Number(button.dataset.index)));
+    });
+    bugtongNext.hidden = true;
+    bugtongFeedback.textContent = "Choose the answer that fits the riddle.";
+    bugtongFeedback.className = "logic-feedback";
+  }
+
+  function chooseBugtong(index) {
+    if (!bugtongState.playing || bugtongState.locked) return;
+    bugtongState.locked = true;
+    bugtongState.answered = true;
+    const question = bugtongState.questions[bugtongState.round];
+    const correct = index === question.answerIndex;
+    question.chosen = index;
+    if (correct) bugtongState.score += 1;
+    bugtongScore.textContent = `${bugtongState.score} / 20`;
+    $$(".logic-option", bugtongOptions).forEach((button, buttonIndex) => {
+      button.disabled = true;
+      if (buttonIndex === question.answerIndex) button.classList.add("is-correct");
+      if (buttonIndex === index && !correct) button.classList.add("is-wrong");
+    });
+    bugtongFeedback.textContent = correct
+      ? `Tama! Ang sagot ay ${question.answer}.`
+      : `Not quite. Ang sagot ay ${question.answer}.`;
+    bugtongFeedback.className = `logic-feedback ${correct ? "is-good" : "is-bad"}`;
+    bugtongNext.hidden = false;
+    bugtongNext.textContent = bugtongState.round === bugtongState.questions.length - 1 ? "See answers →" : "Next riddle →";
+  }
+
+  function advanceBugtong() {
+    if (!bugtongState.playing || !bugtongState.answered) return;
+    if (bugtongState.round >= bugtongState.questions.length - 1) {
+      finishBugtongGame();
+      return;
+    }
+    bugtongState.round += 1;
+    renderBugtongQuestion();
+  }
+
+  function finishBugtongGame() {
+    bugtongState.playing = false;
+    bugtongState.locked = true;
+    bugtongState.answered = false;
+    bugtongOptions.innerHTML = "";
+    bugtongNext.hidden = true;
+    bugtongStart.textContent = "Play again";
+    bugtongType.textContent = "Complete";
+    bugtongProgress.textContent = "20 of 20 solved";
+    bugtongPrompt.textContent = "Tapos na ang lahat ng bugtong!";
+    const message = bugtongState.score >= 16
+      ? "Bugtong champion!"
+      : bugtongState.score >= 10
+        ? "Magaling! Sharp mind."
+        : "Every bugtong teaches a new way to think.";
+    bugtongFeedback.textContent = `${message} You answered ${bugtongState.score} of 20 correctly.`;
+    bugtongFeedback.className = bugtongState.score >= 16 ? "logic-feedback is-good" : "logic-feedback";
+    bugtongReview.hidden = false;
+    bugtongReview.innerHTML = `
+      <h4>Bugtong answers</h4>
+      <div class="logic-review-list">
+        ${bugtongState.questions.map((question, index) => {
+          const chosen = question.chosen === null ? "—" : question.choices[question.chosen];
+          const correct = question.chosen === question.answerIndex;
+          return `
+            <div class="logic-review-row ${correct ? "is-correct" : "is-wrong"}">
+              <span class="logic-review-num">${index + 1}</span>
+              <div>
+                <strong>${esc(question.prompt)}</strong>
+                <span>Answer: ${esc(question.answer)}. Your answer: ${esc(chosen)}.</span>
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  bugtongStart.addEventListener("click", startBugtongGame);
+  bugtongNext.addEventListener("click", advanceBugtong);
+
+
   /* ---------- Flying unicorn orbit ---------- */
 
   const orbitHost = $(".title-orbit");
