@@ -1516,6 +1516,7 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
 }
 .moon-meter span {
   display: block;
+  width: 50%;
   height: 100%;
   border-radius: inherit;
   transition: width 0.35s ease;
@@ -1982,6 +1983,7 @@ main, .site-head, .site-foot { position: relative; z-index: 1; }
   color: var(--violet-light);
   margin-bottom: 10px;
 }
+.grade-block h4.grade-try-title { margin-top: 20px; }
 .grade-block ul {
   list-style: none;
   margin: 0;

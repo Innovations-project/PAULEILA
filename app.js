@@ -674,7 +674,7 @@
         <div class="grade-block">
           <h4>Words to know</h4>
           <div class="word-chips">${entry.words.map((word) => `<span>${word}</span>`).join("")}</div>
-          <h4 style="margin-top:20px">Try this</h4>
+          <h4 class="grade-try-title">Try this</h4>
           <ul>
             <li>Pick one skill and practise it for 10 focused minutes.</li>
             <li>Ask a grown-up what they remember from this grade.</li>
@@ -757,16 +757,27 @@
 
   function renderWisdomMessage(text) {
     let letterIndex = 0;
-    const words = text.split(" ").map((word) => {
-      const letters = Array.from(word).map((char) => {
-        const span = `<span class="oracle-letter" style="--i:${letterIndex}">${char}</span>`;
+    const wrapper = document.createElement("span");
+    wrapper.setAttribute("aria-hidden", "true");
+    const words = text.split(" ");
+    words.forEach((word, wordIndex) => {
+      const wordSpan = document.createElement("span");
+      wordSpan.className = "oracle-word";
+      Array.from(word).forEach((char) => {
+        const letterSpan = document.createElement("span");
+        letterSpan.className = "oracle-letter";
+        letterSpan.style.setProperty("--i", String(letterIndex));
+        letterSpan.textContent = char;
+        wordSpan.appendChild(letterSpan);
         letterIndex += 1;
-        return span;
-      }).join("");
-      letterIndex += 1;
-      return `<span class="oracle-word">${letters}</span>`;
-    }).join(" ");
-    wisdomMessage.innerHTML = `<span aria-hidden="true">${words}</span>`;
+      });
+      wrapper.appendChild(wordSpan);
+      if (wordIndex < words.length - 1) {
+        wrapper.appendChild(document.createTextNode(" "));
+        letterIndex += 1;
+      }
+    });
+    wisdomMessage.replaceChildren(wrapper);
     wisdomMessage.setAttribute("aria-label", text);
   }
 
@@ -1248,6 +1259,8 @@ English: ${JSON.stringify(text)}`;
       const response = await fetch("https://text.pollinations.ai/openai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "omit",
+        referrerPolicy: "no-referrer",
         body: JSON.stringify({
           model: "openai-fast",
           temperature: 0,
@@ -1532,13 +1545,109 @@ English: ${JSON.stringify(text)}`;
     };
   }
 
-  function buildQuiz(subjectId, grade) {
-    if (subjectId === "math") return generateMathQuiz(grade).map(prepareQuizQuestion);
+  const mathQuizPoolCache = new Map();
+  const QUIZ_POOL_TARGET = 120;
+
+  function buildStaticQuizPool(subjectId, grade) {
     const bank = quizBank[subjectId];
     if (!bank) return [];
     const band = grade <= 3 ? "lower" : "upper";
-    const pool = [...(bank[band] || []), ...(bank.general || [])];
-    return shuffle(pool).slice(0, 20).map(prepareQuizQuestion);
+    const base = [...(bank[band] || []), ...(bank.general || [])];
+    const candidates = [];
+
+    base.forEach((item, baseIndex) => {
+      const correct = String(item.choices[item.answer]);
+      const wrong = item.choices.filter((_, index) => index !== item.answer);
+      const distractorPrompts = base
+        .filter((candidate, index) => index !== baseIndex && String(candidate.choices[candidate.answer]) !== correct)
+        .map((candidate) => candidate.q);
+      const distractors = shuffle(distractorPrompts).slice(0, 3);
+      const reverseChoices = distractors.length === 3 ? shuffle([item.q, ...distractors]) : [];
+      const reverseAnswer = reverseChoices.indexOf(item.q);
+      const addVariant = (key, prompt, choices, answer) => {
+        candidates.push({
+          q: prompt,
+          choices,
+          answer,
+          id: `static:${subjectId}:${band}:${baseIndex}:${key}`
+        });
+      };
+
+      addVariant("direct", item.q, item.choices, item.answer);
+      if (reverseChoices.length === 4) {
+        addVariant("reverse-1", `Which question is answered by “${correct}”?`, reverseChoices, reverseAnswer);
+        addVariant("reverse-2", `If the answer is “${correct}”, which question fits?`, reverseChoices, reverseAnswer);
+        addVariant("reverse-3", `Which of these questions has “${correct}” as its answer?`, reverseChoices, reverseAnswer);
+      }
+      addVariant("tf-true", `True or false: “${correct}” is the answer to “${item.q}”.`, ["True", "False"], 0);
+      addVariant("tf-true-2", `True or false: For the question “${item.q}”, the correct answer is “${correct}”.`, ["True", "False"], 0);
+      addVariant("tf-false", `True or false: “${wrong[0]}” is the answer to “${item.q}”.`, ["True", "False"], 1);
+    });
+
+    const unique = [];
+    const promptKeys = new Set();
+    candidates.forEach((candidate) => {
+      const key = candidate.q.toLowerCase().replace(/\s+/g, " ").trim();
+      if (promptKeys.has(key)) return;
+      promptKeys.add(key);
+      unique.push(candidate);
+    });
+
+    const seed = hashDate(`quiz:${subjectId}:${grade}:${localDateKey()}`);
+    return seededShuffle(unique, seed);
+  }
+
+  function withSeededRandom(seed, callback) {
+    const originalRandom = Math.random;
+    let state = seed >>> 0;
+    Math.random = () => {
+      state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+      return state / 4294967296;
+    };
+    try {
+      return callback();
+    } finally {
+      Math.random = originalRandom;
+    }
+  }
+
+  function buildMathQuizPool(grade) {
+    if (mathQuizPoolCache.has(grade)) return mathQuizPoolCache.get(grade);
+    const unique = new Map();
+    withSeededRandom(hashDate(`math-pool:${grade}`), () => {
+      for (let attempt = 0; attempt < 40 && unique.size < QUIZ_POOL_TARGET; attempt += 1) {
+        generateMathQuiz(grade).forEach((item) => {
+          if (!unique.has(item.q)) {
+            unique.set(item.q, { ...item, id: `math:${grade}:${item.q}` });
+          }
+        });
+      }
+    });
+    const pool = [...unique.values()];
+    mathQuizPoolCache.set(grade, pool);
+    return pool;
+  }
+
+  function buildQuiz(subjectId, grade) {
+    const pool = subjectId === "math" ? buildMathQuizPool(grade) : buildStaticQuizPool(subjectId, grade);
+    if (!pool.length) return [];
+
+    const storageKey = `quiz-seen:${subjectId}:${grade}`;
+    const saved = store.get(storageKey, []);
+    const poolIds = new Set(pool.map((item) => item.id));
+    let seen = new Set((Array.isArray(saved) ? saved : []).filter((id) => typeof id === "string" && poolIds.has(id)));
+    let available = pool.filter((item) => !seen.has(item.id));
+
+    if (available.length < 20) {
+      seen = new Set();
+      available = pool;
+    }
+
+    const seed = hashDate(`quiz:${subjectId}:${grade}:${localDateKey()}`);
+    const chosen = seededShuffle(available, seed).slice(0, Math.min(20, available.length));
+    chosen.forEach((item) => seen.add(item.id));
+    store.set(storageKey, [...seen]);
+    return chosen.map(prepareQuizQuestion);
   }
 
   function renderQuizSubjects() {
@@ -1951,6 +2060,8 @@ English: ${JSON.stringify(text)}`;
       const response = await fetch("https://text.pollinations.ai/openai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "omit",
+        referrerPolicy: "no-referrer",
         signal: controller.signal,
         body: JSON.stringify({
           model: "openai-fast",
@@ -2035,7 +2146,7 @@ English: ${JSON.stringify(text)}`;
       const [year, month, day] = iso.split("-");
       const readingsResponse = await fetch(
         `https://cpbjr.github.io/catholic-readings-api/readings/${year}/${month}-${day}.json`,
-        { cache: "no-store" }
+        { cache: "no-store", credentials: "omit", referrerPolicy: "no-referrer" }
       );
       if (!readingsResponse.ok) throw new Error("readings unavailable");
       const readings = await readingsResponse.json();
@@ -2043,7 +2154,8 @@ English: ${JSON.stringify(text)}`;
       if (!gospelRef) throw new Error("no gospel reference");
 
       const passageResponse = await fetch(
-        "https://bible-api.com/" + encodeURIComponent(gospelRef) + "?translation=web"
+        "https://bible-api.com/" + encodeURIComponent(gospelRef) + "?translation=web",
+        { credentials: "omit", referrerPolicy: "no-referrer" }
       );
       if (!passageResponse.ok) throw new Error("passage unavailable");
       const passage = await passageResponse.json();

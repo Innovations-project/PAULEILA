@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://flagcdn.com; connect-src 'self' https://text.pollinations.ai https://cpbjr.github.io https://bible-api.com https://fonts.googleapis.com https://fonts.gstatic.com; media-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="no-referrer">
 <title>PAULEILA — A Genius Little Girl's World</title>
 <meta name="description" content="PAULEILA is a purple little universe of funny jokes, quick brain games, a word of the day, a magic 8 ball of kind words, and books for every kind of reader.">
 <meta name="theme-color" content="#07040d">
@@ -302,7 +304,7 @@
           <div class="scramble-tiles" id="scramble-tiles" aria-hidden="true"></div>
           <div class="scramble-row">
             <label class="sr-only" for="scramble-input">Your answer</label>
-            <input id="scramble-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Type the word…">
+            <input id="scramble-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="30" placeholder="Type the word…">
             <button class="btn btn-primary" id="scramble-check" type="button">Check</button>
           </div>
           <p class="scramble-hint" id="scramble-hint"></p>
@@ -401,15 +403,15 @@
         <div class="moon-dashboard">
           <div class="moon-resource" id="moon-oxygen-card">
             <div class="moon-resource-top"><span>Oxygen</span><strong id="moon-oxygen">6</strong></div>
-            <div class="moon-meter"><span id="moon-oxygen-bar" style="width:50%"></span></div>
+            <div class="moon-meter"><span id="moon-oxygen-bar"></span></div>
           </div>
           <div class="moon-resource" id="moon-food-card">
             <div class="moon-resource-top"><span>Food</span><strong id="moon-food">6</strong></div>
-            <div class="moon-meter"><span id="moon-food-bar" style="width:50%"></span></div>
+            <div class="moon-meter"><span id="moon-food-bar"></span></div>
           </div>
           <div class="moon-resource" id="moon-energy-card">
             <div class="moon-resource-top"><span>Energy</span><strong id="moon-energy">6</strong></div>
-            <div class="moon-meter"><span id="moon-energy-bar" style="width:50%"></span></div>
+            <div class="moon-meter"><span id="moon-energy-bar"></span></div>
           </div>
         </div>
 
@@ -650,7 +652,7 @@
           <span class="meta" id="gospel-source">World English Bible · public domain</span>
           <div class="gospel-actions">
             <button class="btn btn-ghost btn-small" id="gospel-retry" type="button" hidden>Try again ↻</button>
-            <a class="btn btn-ghost btn-small" id="gospel-link" href="https://bible.usccb.org/" target="_blank" rel="noopener">Full readings ↗</a>
+            <a class="btn btn-ghost btn-small" id="gospel-link" href="https://bible.usccb.org/" target="_blank" rel="noopener noreferrer">Full readings ↗</a>
           </div>
         </div>
       </article>
@@ -684,7 +686,7 @@
     <div class="translate-box">
       <label class="translate-label" for="translate-input">English text</label>
       <div class="translate-bar">
-        <input id="translate-input" type="text" placeholder="e.g. Good morning! I hope you have a wonderful day." autocomplete="off" autocapitalize="sentences" />
+        <input id="translate-input" type="text" placeholder="e.g. Good morning! I hope you have a wonderful day." autocomplete="off" autocapitalize="sentences" maxlength="500" />
         <button class="btn btn-primary" id="translate-go" type="button">Translate ✨</button>
       </div>
       <p class="translate-status" id="translate-status" aria-live="polite">Type a word, phrase, or full sentence and press Enter.</p>
@@ -700,7 +702,7 @@
       <div>
         <p class="eyebrow">The honeycomb challenge</p>
         <h2>Quiz Bee</h2>
-        <p class="lede">Pick a subject, choose your grade, and answer 20 questions. Every finish earns a congratulations and a full answer review.</p>
+        <p class="lede">Pick a subject, choose your grade, and answer 20 questions. The order refreshes daily, and a six-quiz cycle keeps questions from repeating. Every finish earns a congratulations and a full answer review.</p>
       </div>
       <div class="head-actions">
         <button class="btn btn-ghost btn-small" id="quiz-restart" type="button" hidden>Start over ↺</button>
@@ -809,7 +811,7 @@
     </div>
     <footer class="reader-foot">
       <span>Source: Project Gutenberg (public domain in the U.S.)</span>
-      <a id="reader-source" href="#" target="_blank" rel="noopener">View on Gutenberg ↗</a>
+      <a id="reader-source" href="#" target="_blank" rel="noopener noreferrer">View on Gutenberg ↗</a>
     </footer>
   </article>
 </div>
