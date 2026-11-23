@@ -1173,7 +1173,7 @@
     { code: "zh", name: "Chinese", country: "China", flagUrl: "https://flagcdn.com/w80/cn.png", note: "中文" },
     { code: "it", name: "Italian", country: "Italy", flagUrl: "https://flagcdn.com/w80/it.png", note: "italiano" },
     { code: "es", name: "Spanish", country: "Spain", flagUrl: "https://flagcdn.com/w80/es.png", note: "español" },
-    { code: "ar", name: "Arabic", country: "Saudi Arabia", flagUrl: "https://flagcdn.com/w80/sa.png", note: "العربية" }
+    { code: "tl", name: "Tagalog", country: "Philippines", flagUrl: "https://flagcdn.com/w80/ph.png", note: "Tagalog" }
   ];
 
   const flagMarkup = (lang) =>
@@ -1243,11 +1243,11 @@
     }
     renderTranslateLoading();
     translateStatus.textContent = "Translating…";
-    const prompt = `Translate the following English text into Japanese, Korean, Simplified Chinese, Italian, Spanish, and Arabic. The text may be a word, phrase, or complete sentence. Return ONLY valid JSON with this exact shape:
-{"ja":{"translation":"...","written":"..."},"ko":{"translation":"...","written":"..."},"zh":{"translation":"...","written":"..."},"it":{"translation":"...","written":"..."},"es":{"translation":"...","written":"..."},"ar":{"translation":"...","written":"..."}}
+    const prompt = `Translate the following English text into Japanese, Korean, Simplified Chinese, Italian, Spanish, and Tagalog. The text may be a word, phrase, or complete sentence. Return ONLY valid JSON with this exact shape:
+{"ja":{"translation":"...","written":"..."},"ko":{"translation":"...","written":"..."},"zh":{"translation":"...","written":"..."},"it":{"translation":"...","written":"..."},"es":{"translation":"...","written":"..."},"tl":{"translation":"...","written":"..."}}
 Rules:
 - "translation" is a natural, fluent translation in the target language's native script. For whole sentences, translate the complete meaning naturally rather than word-for-word; keep the tone, names, numbers, and punctuation.
-- "written" is how the full translation is written or pronounced for a learner: Japanese romaji; Korean revised romanization; Chinese pinyin with tone marks; Italian pronunciation in plain Latin letters; Spanish pronunciation in plain Latin letters; Arabic transliteration in plain Latin letters.
+- "written" is how the full translation is written or pronounced for a learner: Japanese romaji; Korean revised romanization; Chinese pinyin with tone marks; Italian pronunciation in plain Latin letters; Spanish pronunciation in plain Latin letters; Tagalog in natural spelling with a simple pronunciation guide when helpful.
 - Include all six keys even when the text is a short word or number.
 - Keep numbers, names and meaning accurate.
 - No markdown, no extra text.
